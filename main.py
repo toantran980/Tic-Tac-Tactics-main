@@ -16,7 +16,7 @@ class Game:
                     sys.exit()
 
             self.screen.fill('black')
-            x_sprite = pygame.image.load('X Sprite.png').convert_alpha()
+            x_sprite = pygame.image.load('Graphics/X Sprite.png').convert_alpha()
             #x_sprite = pygame.transform.rotozoom(x_sprite,0,4)
             x_rect = x_sprite.get_rect(center = (500, 500))
             
