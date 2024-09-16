@@ -10,10 +10,10 @@
     "fileStates": {
         "map1.tmx": {
             "scale": 0.5,
-            "selectedLayer": 0,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 1457,
-                "y": 1697
+                "x": 1537,
+                "y": 1985
             }
         },
         "mountain_landscape.tsx": {
