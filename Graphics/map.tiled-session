@@ -1,0 +1,43 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "map1.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "map1.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1457,
+                "y": 1697
+            }
+        },
+        "mountain_landscape.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "void-tiles.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "C:/Users/dell/Downloads",
+    "map.height": 38,
+    "map.lastUsedFormat": "tmx",
+    "map.width": 40,
+    "openFiles": [
+        "map1.tmx",
+        "void-tiles.tsx"
+    ],
+    "project": "map.tiled-project",
+    "recentFiles": [
+        "void-tiles.tsx",
+        "map1.tmx",
+        "mountain_landscape.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}
