@@ -12,8 +12,8 @@
             "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1537,
-                "y": 1985
+                "x": 1557,
+                "y": 29
             }
         },
         "mountain_landscape.tsx": {
@@ -30,13 +30,12 @@
     "map.lastUsedFormat": "tmx",
     "map.width": 40,
     "openFiles": [
-        "map1.tmx",
-        "void-tiles.tsx"
+        "map1.tmx"
     ],
     "project": "map.tiled-project",
     "recentFiles": [
-        "void-tiles.tsx",
         "map1.tmx",
+        "void-tiles.tsx",
         "mountain_landscape.tsx"
     ],
     "tileset.lastUsedFormat": "tsx"
