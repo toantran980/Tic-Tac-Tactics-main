@@ -1,4 +1,6 @@
 import pygame, sys
+import movements
+#import tic_tac_toe
 
 class Game:
     def __init__(self):
@@ -7,13 +9,17 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode((1280,720))
         self.clock = pygame.time.Clock()
+        # Variable that stores whether we are in a battle or not
+        self.battle = None
 
     def run(self):
+        # Add code that stops the player from walking when battling
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                
 
             self.screen.fill('black')
             x_sprite = pygame.image.load('Graphics/X Sprite.png').convert_alpha()
@@ -27,3 +33,4 @@ class Game:
 if __name__ == '__main__':
     game = Game()
     game.run()
+    
