@@ -23,18 +23,18 @@ class Battle:
 
 # pass a screen to the function
 # should eventually also pass each image so we are not being redundant
-def tic_tac_game(threat):
+def tic_tac_game(SCREEN, BOARD, X_IMG, O_IMG, FONT):
 
     WIDTH, HEIGHT = 1280, 720
 
     # load font
-    FONT = pygame.font.Font()
+    # FONT = pygame.font.Font()
     # load board
-    BOARD = pygame.image.load()
+    # BOARD = pygame.image.load()
     # load image
-    X_IMG = pygame.image.load()
+    # X_IMG = pygame.image.load()
     # load image
-    O_IMG = pygame.image.load()
+    # O_IMG = pygame.image.load()
 
     BG_COLOR = (214, 201, 227)
 

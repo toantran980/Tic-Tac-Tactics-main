@@ -22,13 +22,12 @@ class Game:
                 
 
             self.screen.fill('black')
-            x_sprite = pygame.image.load('Graphics/X Sprite.png').convert_alpha()
-            #x_sprite = pygame.transform.rotozoom(x_sprite,0,4)
-            x_rect = x_sprite.get_rect(center = (500, 500))
-            
-            self.screen.blit(x_sprite, x_rect)
             pygame.display.update()
             self.clock.tick(60)
+
+    def load_assets(self):
+        BOARD = pygame.imge.load("Graphics/Board.png").convert_alpha()
+        FONT = pygame.font.Font("Font/Pixeltype.ttf", 100)
 
 if __name__ == '__main__':
     game = Game()
