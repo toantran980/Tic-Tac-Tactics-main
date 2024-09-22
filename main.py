@@ -1,28 +1,35 @@
 import pygame, sys
+from handle_movements import Handle
+# from load_images import Image
 
 class Game:
-    def __init__(self):
-
-        #general setup
+    def __init__(self) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((1280,720))
         self.clock = pygame.time.Clock()
+        self.handle = Handle(500, 650)
+        self.map = pygame.image.load('Graphics/map1.png')
 
-    def run(self):
-        while True:
+    def run(self) -> None:
+        is_running = True
+        while is_running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    is_running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        is_running = False
+                        pygame.quit()
+                        sys.exit()
 
-            self.screen.fill('black')
-            x_sprite = pygame.image.load('Graphics/X Sprite.png').convert_alpha()
-            #x_sprite = pygame.transform.rotozoom(x_sprite,0,4)
-            x_rect = x_sprite.get_rect(center = (500, 500))
-            
-            self.screen.blit(x_sprite, x_rect)
-            pygame.display.update()
+            self.screen.blit(self.map, (0, 0))
+            self.handle.handle_mov(event)
+            self.screen.blit(self.handle.images[self.handle.curr_image], 
+                            (self.handle.x_axis, self.handle.y_axis))
+
+            pygame.display.flip()
             self.clock.tick(60)
+    
 
 if __name__ == '__main__':
     game = Game()
