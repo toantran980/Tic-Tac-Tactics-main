@@ -1,7 +1,6 @@
 import pygame, sys
 from handle_movements import Handle
 # from load_images import Image
-import movements
 #import tic_tac_toe
 
 class Game:

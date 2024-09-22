@@ -32,8 +32,7 @@ class Handle:
                 pygame.K_RIGHT: ('right', SPEED),
                 pygame.K_LEFT: ('left', -SPEED)
             }
-
-        
+            
             for key, (direction, step) in directions.items():
                 if event.key == key:
                     if direction in ['left', 'right']:
