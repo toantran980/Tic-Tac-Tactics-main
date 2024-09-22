@@ -1,6 +1,8 @@
 import pygame, sys
 from handle_movements import Handle
 # from load_images import Image
+import movements
+#import tic_tac_toe
 
 class Game:
     def __init__(self) -> None:
@@ -9,6 +11,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.handle = Handle(500, 650)
         self.map = pygame.image.load('Graphics/map1.png')
+        # Variable that stores whether we are in a battle or not
+        self.battle = None
 
     def run(self) -> None:
         is_running = True
@@ -31,6 +35,11 @@ class Game:
             self.clock.tick(60)
     
 
+    def load_assets(self):
+        BOARD = pygame.imge.load("Graphics/Board.png").convert_alpha()
+        FONT = pygame.font.Font("Font/Pixeltype.ttf", 100)
+
 if __name__ == '__main__':
     game = Game()
     game.run()
+    
