@@ -31,7 +31,8 @@ class Game:
                         sys.exit()
                     if event.key == pygame.K_b:
                         self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT)
-                        self.screen.fill("black")
+                        # self.screen.fill("black")
+                        # pygame.display.flip()
 
 
             self.screen.blit(self.map, (0, 0))

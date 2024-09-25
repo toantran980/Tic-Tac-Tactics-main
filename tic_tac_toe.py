@@ -52,34 +52,47 @@ class Battle:
         pygame.display.update()
         # Still want player to be capable of closing the screen while in combat
         game_finished = False
-        while True:
+        con = True
+        escape = True
+        while escape:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN and con:
                     self.board, self.to_move = self.add_XO(self.board, self.graphical_board, self.to_move)
 
                     if game_finished:
                         self.board = [[1,2,3], [4,5,6], [7,8,9]]
                         self.graphical_board = [[[None, None], [None, None], [None, None]],
-                                        [[None, None], [None, None], [None, None]]
+                                        [[None, None], [None, None], [None, None]],
                                         [[None, None], [None, None], [None, None]]]
         
                         self.to_move = 'X'
-                        self.game_finsihed = False
+                        game_finished = False
     
                         self.SCREEN.fill(self.BG_COLOR)
                         self.SCREEN.blit(self.BOARD, (64,64))
 
                         pygame.display.update()
 
-                    if self.check_win(self.board) is not None:
+                    result = self.check_win(self.board)
+                    if result is not None:
                         game_finished = True
-                        if self.check_win(self.board) != "DRAW":
-                            break
+                        if result == "DRAW":
+                            # Handle draw case
+                            print("Game ended in a draw")
+                            con = True  # Stop taking moves
+                        else:
+                            # Handle win case
+                            print(f"{result} wins!")
+                            con = False  # Stop taking moves
+
 
                     pygame.display.update()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    escape = False
+
 
     def render_board(self, board, ximg, oimg):
         for i in range(3):
@@ -160,7 +173,7 @@ class Battle:
             self.graphical_board[0][2][0] = pygame.image.load(f"Graphics/Winning {winner}.png")
             self.SCREEN.blit(self.graphical_board[0][2][0], self.graphical_board[0][2][1])
             self.graphical_board[1][1][0] = pygame.image.load(f"Graphics/Winning {winner}.png")
-            self.SCREEN.blit(self.graphical_board[1][1][0], self.graphical_board[1][1][0])
+            self.SCREEN.blit(self.graphical_board[1][1][0], self.graphical_board[1][1][1])
             self.graphical_board[2][0][0] = pygame.image.load(f"Graphics/Winning {winner}.png")
             self.SCREEN.blit(self.graphical_board[2][0][0], self.graphical_board[2][0][1])
             pygame.display.update()
@@ -172,6 +185,3 @@ class Battle:
                     if board[i][j] != 'X' and board[i][j] != 'O':
                         return None
             return "DRAW"
-        
-
-
