@@ -1,4 +1,5 @@
 import pygame, sys
+import random
 
 # will eventuall pass which boss is being faced
 # will need to create a function for each boss
@@ -87,9 +88,24 @@ class Battle:
                             # Handle win case
                             print(f"{result} wins!")
                             con = False  # Stop taking moves
+                        pygame.display.update()
+                        continue
 
+                    #pygame.display.update()
+                    # AI's turn (if the game is not finish)
+                    if not game_finished and self.to_move == 'O':
+                        self.board, self.to_move = self.rand_ai_move(self.board, self.graphical_board, self.to_move)
 
-                    pygame.display.update()
+                        result = self.check_win(self.board)
+                        if result is not None:
+                            game_finished = True
+                            if result == "Draw":
+                                print("Game ended in a draw")
+                                con = True
+                            else:
+                                print(f"{result} wins!")
+                                con = False
+                        pygame.display.update()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     escape = False
 
@@ -185,3 +201,23 @@ class Battle:
                     if board[i][j] != 'X' and board[i][j] != 'O':
                         return None
             return "DRAW"
+        
+        return None
+    
+    def rand_ai_move(self, board, graphical_board, to_move):
+        empty_cells = [(i, j) for i in range(3) for j in range(3) if board[i][j] not in ['X', 'O']]
+
+        if empty_cells:
+            move = random.choice(empty_cells)
+            board[move[0]][move[1]] = 'O'
+            to_move = 'X'
+
+        self.render_board(board, self.X_IMG, self.O_IMG)
+
+        for i in range(3):
+            for j in range(3):
+                if graphical_board[i][j][0] is not None:
+                    self.SCREEN.blit(self.graphical_board[i][j][0], self.graphical_board[i][j][1])
+
+        return board, to_move
+    
