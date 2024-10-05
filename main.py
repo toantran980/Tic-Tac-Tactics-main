@@ -1,13 +1,17 @@
 import pygame, sys
 from handle_movements import Handle
 from tic_tac_toe import Battle
+from pytmx.util_pygame import load_pygame
 # from load_images import Image
 #import tic_tac_toe
+
+
 
 class Game:
     def __init__(self) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((1280,720))
+        tmx_data = load_pygame('Graphics/map1.tmx')
         self.clock = pygame.time.Clock()
         self.handle = Handle(500, 650)
         self.map = pygame.image.load('Graphics/map1.png')
