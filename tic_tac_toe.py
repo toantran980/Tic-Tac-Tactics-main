@@ -63,9 +63,9 @@ class Battle:
                     sys.exit()
 
                 if event.type == pygame.MOUSEBUTTONDOWN and con:
-                    self.board, self.to_move = self.add_XO_five(self.board, self.graphical_board, self.to_move)
+                    self.board, self.to_move = self.add_XO_fivebyfive(self.board, self.graphical_board, self.to_move)
 
-                    result = self.check_win(self.board)
+                    result = self.check_win_fivebyfive(self.board)
                     if result is not None:
                         game_finished = True
                         if result == "DRAW":
@@ -79,9 +79,9 @@ class Battle:
 
                     # AI's move (if game is not finished)
                     if not game_finished and self.to_move == 'O':
-                        self.board, self.to_move = self.ai_move(self.board, self.graphical_board, self.to_move)
+                        self.board, self.to_move = self.ai_move_fivebyfive(self.board, self.graphical_board, self.to_move)
 
-                        result = self.check_win(self.board)
+                        result = self.check_win_fivebyfive(self.board)
                         if result is not None:
                             game_finished = True
                             if result == "DRAW":
@@ -207,7 +207,6 @@ class Battle:
                 
         return board, to_move
 
-    # will eventually need to write code that also handles a 5x5 board
     # work on reducing redundancy from loading images
     def check_win(self, board):
         winner = None
@@ -263,7 +262,6 @@ class Battle:
         return None
     
     # rand_ai_move chooses rand spot on board, will only use for first boss
-    # need to work on smarter ai and implementing a 5x5 board
     def rand_ai_move(self, board, graphical_board, to_move):
         empty_cells = [(i, j) for i in range(3) for j in range(3) if board[i][j] not in ['X', 'O']]
 
@@ -281,9 +279,112 @@ class Battle:
 
         return board, to_move
     
-def render_board(self, board, ximg, oimg):
-    for i in range(5):
-        for j in range(5):
-            if board[i][j] == 'X':
-                self.graphical_board[i][j][0] = ximg
-                self.graphical_board[i][j][1] = x
+    def render_fivebyfive(self, board, ximg, oimg):
+        for i in range(5):
+            for j in range(5):
+                if board[i][j] == 'X':
+                    self.graphical_board[i][j][0] = ximg
+                    self.graphical_board[i][j][1] = ximg.get_rect(center=(j*150+150, i*150+150))
+                elif board[i][j] == 'O':
+                    self.graphical_board[i][j][0] = oimg
+                    self.graphical_board[i][j][1] = oimg.get_rect(center=(j*150+150, i*150+150))
+
+    def add_XO_fivebyfive(self, board, graphical_board, to_move):
+        current_pos = pygame.mouse.get_pos()
+        converted_x = (current_pos[0] - 64) // (835 // 5)  # Adjust for 5x5 board size
+        converted_y = (current_pos[1] - 64) // (835 // 5)
+
+        if 0 <= converted_x < 5 and 0 <= converted_y < 5:
+            if board[int(converted_y)][int(converted_x)] not in ['X', 'O']:
+                board[int(converted_y)][int(converted_x)] = to_move
+                to_move = 'O' if to_move == 'X' else 'X'
+
+        self.render_board(board, self.X_IMG, self.O_IMG)
+
+        for i in range(5):
+            for j in range(5):
+                if graphical_board[i][j][0] is not None:
+                    self.SCREEN.blit(self.graphical_board[i][j][0], self.graphical_board[i][j][1])
+
+        return board, to_move
+
+    # AI using Minimax algorithm
+    def ai_move_fivebyfive(self, board, graphical_board, to_move):
+        best_score = float('-inf')
+        best_move = None
+
+        for i in range(5):
+            for j in range(5):
+                if board[i][j] not in ['X', 'O']:
+                    board[i][j] = 'O'
+                    score = self.minimax(board, 0, False)
+                    board[i][j] = i * 5 + j + 1  # Reset to original value
+                    if score > best_score:
+                        best_score = score
+                        best_move = (i, j)
+
+        if best_move:
+            board[best_move[0]][best_move[1]] = 'O'
+            to_move = 'X'
+
+        self.render_board(board, self.X_IMG, self.O_IMG)
+
+        for i in range(5):
+            for j in range(5):
+                if graphical_board[i][j][0] is not None:
+                    self.SCREEN.blit(self.graphical_board[i][j][0], self.graphical_board[i][j][1])
+
+        return board, to_move
+
+    # Minimax algorithm to improve AI decision-making
+    def minimax(self, board, depth, is_maximizing):
+        result = self.check_win(board)
+        if result == 'O':
+            return 1
+        elif result == 'X':
+            return -1
+        elif result == 'DRAW':
+            return 0
+
+        if is_maximizing:
+            best_score = float('-inf')
+            for i in range(5):
+                for j in range(5):
+                    if board[i][j] not in ['X', 'O']:
+                        board[i][j] = 'O'
+                        score = self.minimax(board, depth + 1, False)
+                        board[i][j] = i * 5 + j + 1
+                        best_score = max(score, best_score)
+            return best_score
+        else:
+            best_score = float('inf')
+            for i in range(5):
+                for j in range(5):
+                    if board[i][j] not in ['X', 'O']:
+                        board[i][j] = 'X'
+                        score = self.minimax(board, depth + 1, True)
+                        board[i][j] = i * 5 + j + 1
+                        best_score = min(score, best_score)
+            return best_score
+
+    def check_win_fivebyfive(self, board):
+        # Check rows, columns, and diagonals for five in a row
+        for row in range(5):
+            if all(board[row][col] == board[row][0] for col in range(5)):
+                return board[row][0]
+
+        for col in range(5):
+            if all(board[row][col] == board[0][col] for row in range(5)):
+                return board[0][col]
+
+        if all(board[i][i] == board[0][0] for i in range(5)):
+            return board[0][0]
+
+        if all(board[i][4-i] == board[0][4] for i in range(5)):
+            return board[0][4]
+
+        # Check for draw
+        if all(board[i][j] in ['X', 'O'] for i in range(5) for j in range(5)):
+            return "DRAW"
+
+        return None
