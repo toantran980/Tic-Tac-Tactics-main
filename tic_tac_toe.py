@@ -40,6 +40,64 @@ class Battle:
         self.FONT = FONT
         self.BG_COLOR = (214, 201, 227)
 
+    # need to implement function that clears the board
+    def fivebyfive(self):
+        self.board = [[1,2,3,4,5], [6,7,8,9,10], [11,12,13,14,15],
+                      [16,17,18,19,10], [21,22,23,24,25]]
+        self.graphical_board = [[[None, None] for _ in range(5)] for _ in range(5)]
+
+        self.to_move = 'X'
+
+        self.SCREEN.fill(self.BG_COLOR)
+        self.SCREEN.blit(self.BOARD, (64, 64))
+
+        pygame.display.update()
+        game_finished = False
+        con = True
+        escape = True
+
+        while escape:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if event.type == pygame.MOUSEBUTTONDOWN and con:
+                    self.board, self.to_move = self.add_XO_five(self.board, self.graphical_board, self.to_move)
+
+                    result = self.check_win(self.board)
+                    if result is not None:
+                        game_finished = True
+                        if result == "DRAW":
+                            print("Game ended in a draw")
+                            con = True # stop taking moves
+                        else:
+                            print(f"{result} wins!")
+                            con = False # stop taking moves
+                        pygame.display.update()
+                        continue
+
+                    # AI's move (if game is not finished)
+                    if not game_finished and self.to_move == 'O':
+                        self.board, self.to_move = self.ai_move(self.board, self.graphical_board, self.to_move)
+
+                        result = self.check_win(self.board)
+                        if result is not None:
+                            game_finished = True
+                            if result == "DRAW":
+                                print("Game ended in a draw")
+                                con = True
+                            else:
+                                print(f"{result} wins!")
+                                con = False
+                        pygame.display.update()
+
+                    
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    escape = False
+
+    # function for 3x3 battles
+    def threebythree(self):
         self.board = [[1,2,3], [4,5,6], [7,8,9]]
         self.graphical_board = [[[None, None], [None, None], [None, None]],
                         [[None, None], [None, None], [None, None]],
@@ -47,8 +105,8 @@ class Battle:
         
         self.to_move = 'X'
 
-        SCREEN.fill(self.BG_COLOR)
-        SCREEN.blit(BOARD, (64,64))
+        self.SCREEN.fill(self.BG_COLOR)
+        self.SCREEN.blit(self.BOARD, (64,64))
 
         pygame.display.update()
         # Still want player to be capable of closing the screen while in combat
@@ -204,6 +262,8 @@ class Battle:
         
         return None
     
+    # rand_ai_move chooses rand spot on board, will only use for first boss
+    # need to work on smarter ai and implementing a 5x5 board
     def rand_ai_move(self, board, graphical_board, to_move):
         empty_cells = [(i, j) for i in range(3) for j in range(3) if board[i][j] not in ['X', 'O']]
 
@@ -221,3 +281,9 @@ class Battle:
 
         return board, to_move
     
+def render_board(self, board, ximg, oimg):
+    for i in range(5):
+        for j in range(5):
+            if board[i][j] == 'X':
+                self.graphical_board[i][j][0] = ximg
+                self.graphical_board[i][j][1] = x
