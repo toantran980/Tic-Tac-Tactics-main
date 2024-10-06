@@ -3,9 +3,6 @@ from handle_movements import Handle
 from tic_tac_toe import Battle
 #sfrom pytmx.util_pygame import load_pygame
 # from load_images import Image
-#import tic_tac_toe
-
-
 
 class Game:
     def __init__(self) -> None:
