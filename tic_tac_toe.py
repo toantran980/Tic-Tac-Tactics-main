@@ -23,7 +23,7 @@ class Battle:
 
     # pass a screen to the function
     # should eventually also pass each image so we are not being redundant
-    def __init__(self, SCREEN, BOARD, X_IMG, O_IMG, FONT):
+    def __init__(self, SCREEN, BOARD, X_IMG, O_IMG, FONT, gametype):
         # load font
         # FONT = pygame.font.Font()
         # load board
@@ -39,6 +39,11 @@ class Battle:
         self.O_IMG = O_IMG
         self.FONT = FONT
         self.BG_COLOR = (214, 201, 227)
+
+        if gametype == "threebythree":
+            self.threebythree()
+        else:
+            self.fivebyfive()
 
     # need to implement function that clears the board
     def fivebyfive(self):
@@ -106,7 +111,7 @@ class Battle:
         self.to_move = 'X'
 
         self.SCREEN.fill(self.BG_COLOR)
-        self.SCREEN.blit(self.BOARD, (64,64))
+        self.SCREEN.blit(self.BOARD, (-66,-26))
 
         pygame.display.update()
         # Still want player to be capable of closing the screen while in combat
@@ -131,7 +136,7 @@ class Battle:
                         game_finished = False
     
                         self.SCREEN.fill(self.BG_COLOR)
-                        self.SCREEN.blit(self.BOARD, (64,64))
+                        self.SCREEN.blit(self.BOARD, (-66,-26))
 
                         pygame.display.update()
 
@@ -174,18 +179,18 @@ class Battle:
                 if board[i][j] == 'X':
                     # Create an X image and rect
                     self.graphical_board[i][j][0] = ximg
-                    self.graphical_board[i][j][1] = ximg.get_rect(center=(j*300+150, i*300+150))
+                    self.graphical_board[i][j][1] = ximg.get_rect(center=(j*257 + 128, i*257 + 128))
                 elif board[i][j] == 'O':
                     # Create an O image and rect
                     self.graphical_board[i][j][0] = oimg
-                    self.graphical_board[i][j][1] = oimg.get_rect(center=(j*300+150, i*300+150))
+                    self.graphical_board[i][j][1] = oimg.get_rect(center=(j*257 + 128, i*257 + 128))
 
     # Adds X or O to board
     def add_XO(self, board, graphical_board, to_move):
         current_pos = pygame.mouse.get_pos()
         # Adjust these based on your board's position and size
-        converted_x = (current_pos[0] - 64) // (835 // 3)  # Assume board starts at x=64 and size 835px
-        converted_y = (current_pos[1] - 64) // (835 // 3)  # Same for y position
+        converted_x = (current_pos[0] + 66) // (772 // 3)  # Assume board starts at x=64 and size 835px
+        converted_y = (current_pos[1] + 26) // (772 // 3)  # Same for y position
 
         # Ensure converted_x and converted_y are valid indices
         if 0 <= converted_x < 3 and 0 <= converted_y < 3:
