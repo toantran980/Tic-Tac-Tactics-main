@@ -5,13 +5,28 @@ from pytmx.util_pygame import load_pygame
 # from load_images import Image
 #import tic_tac_toe
 
-
+# class Tile(pygame.sprite.Sprite):
+#     def __init__(self, pos, surf, groups):
+#         super().__init__(groups)
+#         self.image - surf
+#         self.rect = self.image.get_rect(topleft = pos)
 
 class Game:
     def __init__(self) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((1280,720))
+        #map
         tmx_data = load_pygame('Graphics/map1.tmx')
+        # sprite_group = pygame.sprite.Group()
+
+        # #cycle through all layers
+        # for layer in tmx_data.layers:
+        #     if hasattr(layer, 'data'):
+        #         for x,y,surf in layer.tiles():
+        #             pos = (x * 128, y * 128)
+        #             Tile(pos = pos, surf = surf, groups = sprite_group)
+
+
         self.clock = pygame.time.Clock()
         self.handle = Handle(500, 650)
         self.map = pygame.image.load('Graphics/map1.png')
