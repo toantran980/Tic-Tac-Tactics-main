@@ -1,12 +1,17 @@
 import pygame, sys
 from handle_movements import Handle
 from tic_tac_toe import Battle
+#sfrom pytmx.util_pygame import load_pygame
 # from load_images import Image
+#import tic_tac_toe
+
+
 
 class Game:
     def __init__(self) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((1280,720))
+        #tmx_data = load_pygame('Graphics/map1.tmx')
         self.clock = pygame.time.Clock()
         self.handle = Handle(500, 650)
         self.map = pygame.image.load('Graphics/map1.png')
@@ -14,6 +19,8 @@ class Game:
         self.X_IMG = pygame.image.load("Graphics/X.png")
         self.O_IMG = pygame.image.load("Graphics/O.png")
         self.FONT = pygame.font.Font("Font/Pixeltype.ttf")
+        
+        # Variable that stores whether we are in a battle or not
 
     def run(self) -> None:
         is_running = True
@@ -28,6 +35,8 @@ class Game:
                         sys.exit()
                     if event.key == pygame.K_b:
                         self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT)
+                        # self.screen.fill("black")
+                        # pygame.display.flip()
 
 
             self.screen.blit(self.map, (0, 0))
@@ -39,11 +48,12 @@ class Game:
             self.clock.tick(60)
     
 
-    #def load_assets(self):
-        #BOARD = pygame.imge.load("Graphics/Board.png").convert_alpha()
-        #FONT = pygame.font.Font("Font/Pixeltype.ttf", 100)
+    # def load_assets(self):
+    #     BOARD = pygame.imge.load("Graphics/Board.png").convert_alpha()
+    #     FONT = pygame.font.Font("Font/Pixeltype.ttf", 100)
 
 if __name__ == '__main__':
     game = Game()
     game.run()
+    
     

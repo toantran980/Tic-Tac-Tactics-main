@@ -1,7 +1,7 @@
 import pygame
 from load_images import Image
 
-SPEED = 3
+SPEED = 1
 
 class Handle:
     def __init__(self, x, y) -> None:
