@@ -47,16 +47,28 @@ class Battle:
 
     # need to implement function that clears the board
     def fivebyfive(self):
-        self.board = [[1,2,3,4,5], [6,7,8,9,10], [11,12,13,14,15],
-                      [16,17,18,19,10], [21,22,23,24,25]]
+        self.board = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], 
+                    [11, 12, 13, 14, 15], [16, 17, 18, 19, 20], 
+                    [21, 22, 23, 24, 25]]
         self.graphical_board = [[[None, None] for _ in range(5)] for _ in range(5)]
 
         self.to_move = 'X'
+        square_size = 772 // 5  # Each square is 154 pixels wide for a 5x5 board
+        x_offset = 64  # Offset from the left edge of the screen
 
+        # Fill background and draw the board grid
         self.SCREEN.fill(self.BG_COLOR)
-        self.SCREEN.blit(self.BOARD, (64, 64))
+
+        for i in range(1, 5):  # Draw grid lines (4 lines horizontally and vertically)
+            pygame.draw.line(self.SCREEN, (0, 0, 50), (x_offset, i * square_size), (772 + x_offset, i * square_size), 10)
+            pygame.draw.line(self.SCREEN, (0, 0, 50), (i * square_size + x_offset, 0), (i * square_size + x_offset, 772), 10)
 
         pygame.display.update()
+
+        # Resizing the X and O images to fit inside each square
+        self.X_IMG = pygame.transform.scale(self.X_IMG, (square_size - 10, square_size - 10))
+        self.O_IMG = pygame.transform.scale(self.O_IMG, (square_size - 10, square_size - 10))
+
         game_finished = False
         con = True
         escape = True
@@ -75,14 +87,14 @@ class Battle:
                         game_finished = True
                         if result == "DRAW":
                             print("Game ended in a draw")
-                            con = True # stop taking moves
+                            con = True  # stop taking moves
                         else:
                             print(f"{result} wins!")
-                            con = False # stop taking moves
+                            con = False  # stop taking moves
                         pygame.display.update()
                         continue
 
-                    # AI's move (if game is not finished)
+                    # AI's move (if the game is not finished)
                     if not game_finished and self.to_move == 'O':
                         self.board, self.to_move = self.ai_move_fivebyfive(self.board, self.graphical_board, self.to_move)
 
@@ -97,7 +109,6 @@ class Battle:
                                 con = False
                         pygame.display.update()
 
-                    
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     escape = False
 
@@ -147,7 +158,12 @@ class Battle:
                         game_finished = False
     
                         self.SCREEN.fill(self.BG_COLOR)
-                        self.SCREEN.blit(self.BOARD, (-66,-26))
+                        for i in range(1, 3):
+                            # Horizontal lines
+                            pygame.draw.line(self.SCREEN, (0, 0, 50), (x_offset, i * square_size), (772 + x_offset, i * square_size), 15)
+                            # Vertical lines
+                            pygame.draw.line(self.SCREEN, (0, 0, 50), (i * square_size + x_offset, 0), (i * square_size + x_offset, 772), 15)
+
 
                         pygame.display.update()
 
@@ -327,21 +343,29 @@ class Battle:
 
     def add_XO_fivebyfive(self, board, graphical_board, to_move):
         current_pos = pygame.mouse.get_pos()
-        converted_x = (current_pos[0] - 64) // (835 // 5)  # Adjust for 5x5 board size
-        converted_y = (current_pos[1] - 64) // (835 // 5)
+        
+        # Subtract the x_offset (64) and calculate positions based on 5x5 grid
+        converted_x = (current_pos[0] - 64) // (772 // 5)
+        converted_y = current_pos[1] // (772 // 5)
 
+        # Ensure converted_x and converted_y are valid indices
         if 0 <= converted_x < 5 and 0 <= converted_y < 5:
+            # Check if the cell is empty (i.e., not 'X' or 'O')
             if board[int(converted_y)][int(converted_x)] not in ['X', 'O']:
+                # Place the current move (either 'X' or 'O')
                 board[int(converted_y)][int(converted_x)] = to_move
+                # Switch turns
                 to_move = 'O' if to_move == 'X' else 'X'
 
-        self.render_board(board, self.X_IMG, self.O_IMG)
+        # Render the board after making the move
+        self.render_board_fivebyfive(board, self.X_IMG, self.O_IMG)
 
+        # Display updated images for X and O
         for i in range(5):
             for j in range(5):
                 if graphical_board[i][j][0] is not None:
                     self.SCREEN.blit(self.graphical_board[i][j][0], self.graphical_board[i][j][1])
-
+                    
         return board, to_move
 
     # AI using Minimax algorithm
