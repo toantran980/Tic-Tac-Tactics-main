@@ -101,6 +101,7 @@ class Battle:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     escape = False
 
+    
     # function for 3x3 battles
     def threebythree(self):
         self.board = [[1,2,3], [4,5,6], [7,8,9]]
@@ -111,7 +112,17 @@ class Battle:
         self.to_move = 'X'
 
         self.SCREEN.fill(self.BG_COLOR)
-        self.SCREEN.blit(self.BOARD, (-66,-26))
+        #self.SCREEN.blit(self.BOARD, (-66,-26))
+
+        square_size = 772 // 3  # Each square is about 257 pixels
+        x_offset = 100  # Move the grid 100 pixels to the right (adjust as needed)
+        for i in range(1, 3):
+            # Horizontal lines
+            pygame.draw.line(self.SCREEN, (0, 0, 50), (x_offset, i * square_size), (772 + x_offset, i * square_size), 15)
+            # Vertical lines
+            pygame.draw.line(self.SCREEN, (0, 0, 50), (i * square_size + x_offset, 0), (i * square_size + x_offset, 772), 15)
+
+        
 
         pygame.display.update()
         # Still want player to be capable of closing the screen while in combat
@@ -174,23 +185,42 @@ class Battle:
 
 
     def render_board(self, board, ximg, oimg):
+        square_size = 772 // 3  # Each square is about 257 pixels
+        x_offset = 100  # Move the grid 100 pixels to the right (adjust as needed)
+
         for i in range(3):
             for j in range(3):
+                # Calculate the center of the current square (i, j)
+                center_x = j * square_size + square_size // 2 + x_offset
+                center_y = i * square_size + square_size // 2
+
                 if board[i][j] == 'X':
-                    # Create an X image and rect
                     self.graphical_board[i][j][0] = ximg
-                    self.graphical_board[i][j][1] = ximg.get_rect(center=(j*257 + 128, i*257 + 128))
+                    # Center the X image using get_rect with the calculated center
+                    self.graphical_board[i][j][1] = ximg.get_rect(center=(center_x, center_y))
                 elif board[i][j] == 'O':
-                    # Create an O image and rect
                     self.graphical_board[i][j][0] = oimg
-                    self.graphical_board[i][j][1] = oimg.get_rect(center=(j*257 + 128, i*257 + 128))
+                    # Center the O image using get_rect with the calculated center
+                    self.graphical_board[i][j][1] = oimg.get_rect(center=(center_x, center_y))
+
+        # Draw the grid lines with the same offset
+        for i in range(1, 3):
+            # Horizontal lines
+            pygame.draw.line(self.SCREEN, (0, 0, 50), (x_offset, i * square_size), (772 + x_offset, i * square_size), 15)
+            # Vertical lines
+            pygame.draw.line(self.SCREEN, (0, 0, 50), (i * square_size + x_offset, 0), (i * square_size + x_offset, 772), 15)
+
+
+
+
 
     # Adds X or O to board
     def add_XO(self, board, graphical_board, to_move):
         current_pos = pygame.mouse.get_pos()
-        # Adjust these based on your board's position and size
-        converted_x = (current_pos[0] + 66) // (772 // 3)  # Assume board starts at x=64 and size 835px
-        converted_y = (current_pos[1] + 26) // (772 // 3)  # Same for y position
+        
+        # Subtract the x_offset (100) before calculating the converted_x position
+        converted_x = (current_pos[0] - 100) // (772 // 3)  # Assume board starts at x=100 and size 772px
+        converted_y = current_pos[1] // (772 // 3)  # No x_offset for y; y starts from 0
 
         # Ensure converted_x and converted_y are valid indices
         if 0 <= converted_x < 3 and 0 <= converted_y < 3:
@@ -209,8 +239,9 @@ class Battle:
             for j in range(3):
                 if graphical_board[i][j][0] is not None:
                     self.SCREEN.blit(self.graphical_board[i][j][0], self.graphical_board[i][j][1])
-                
+                    
         return board, to_move
+
 
     # work on reducing redundancy from loading images
     def check_win(self, board):
