@@ -81,36 +81,33 @@ class Battle:
 
                 if event.type == pygame.MOUSEBUTTONDOWN and con:
                     self.board, self.to_move = self.add_XO_fivebyfive(self.board, self.graphical_board, self.to_move)
-
+                    
                     result = self.check_win_fivebyfive(self.board)
                     if result is not None:
                         game_finished = True
                         if result == "DRAW":
                             print("Game ended in a draw")
-                            con = True  # stop taking moves
+                            con = False  # Stop taking moves
                         else:
                             print(f"{result} wins!")
-                            con = False  # stop taking moves
-                        pygame.display.update()
+                            con = False
+                        pygame.display.update()  # Update the display after checking for win/draw
                         continue
 
                     # AI's move (if the game is not finished)
                     if not game_finished and self.to_move == 'O':
                         self.board, self.to_move = self.ai_move_fivebyfive(self.board, self.graphical_board, self.to_move)
-
+                        
                         result = self.check_win_fivebyfive(self.board)
                         if result is not None:
                             game_finished = True
                             if result == "DRAW":
                                 print("Game ended in a draw")
-                                con = True
+                                con = False
                             else:
                                 print(f"{result} wins!")
                                 con = False
-                        pygame.display.update()
-
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    escape = False
+                        pygame.display.update()  # Update the display after AI's move
 
     
     # function for 3x3 battles
@@ -226,10 +223,6 @@ class Battle:
             # Vertical lines
             pygame.draw.line(self.SCREEN, (0, 0, 50), (i * square_size + x_offset, 0), (i * square_size + x_offset, 772), 15)
 
-
-
-
-
     # Adds X or O to board
     def add_XO(self, board, graphical_board, to_move):
         current_pos = pygame.mouse.get_pos()
@@ -332,18 +325,36 @@ class Battle:
         return board, to_move
     
     def render_fivebyfive(self, board, ximg, oimg):
+        square_size = 772 // 5  # Each square is 154 pixels for the 5x5 board
+        x_offset = 64  # Offset to center the board horizontally
+        y_offset = 0   # You can add a vertical offset if needed
+
         for i in range(5):
             for j in range(5):
+                center_x = j * square_size + square_size // 2 + x_offset
+                center_y = i * square_size + square_size // 2 + y_offset
+
+                # Check the board and render the appropriate image
                 if board[i][j] == 'X':
                     self.graphical_board[i][j][0] = ximg
-                    self.graphical_board[i][j][1] = ximg.get_rect(center=(j*150+150, i*150+150))
+                    self.graphical_board[i][j][1] = ximg.get_rect(center=(center_x, center_y))
                 elif board[i][j] == 'O':
                     self.graphical_board[i][j][0] = oimg
-                    self.graphical_board[i][j][1] = oimg.get_rect(center=(j*150+150, i*150+150))
+                    self.graphical_board[i][j][1] = oimg.get_rect(center=(center_x, center_y))
+
+        # After assigning the positions, draw all images onto the screen
+        for i in range(5):
+            for j in range(5):
+                if self.graphical_board[i][j][0] is not None:
+                    self.SCREEN.blit(self.graphical_board[i][j][0], self.graphical_board[i][j][1])
+
+        # Update the screen after rendering
+        pygame.display.update()
+
 
     def add_XO_fivebyfive(self, board, graphical_board, to_move):
         current_pos = pygame.mouse.get_pos()
-        
+
         # Subtract the x_offset (64) and calculate positions based on 5x5 grid
         converted_x = (current_pos[0] - 64) // (772 // 5)
         converted_y = current_pos[1] // (772 // 5)
@@ -358,15 +369,10 @@ class Battle:
                 to_move = 'O' if to_move == 'X' else 'X'
 
         # Render the board after making the move
-        self.render_board_fivebyfive(board, self.X_IMG, self.O_IMG)
+        self.render_fivebyfive(board, self.X_IMG, self.O_IMG)
 
-        # Display updated images for X and O
-        for i in range(5):
-            for j in range(5):
-                if graphical_board[i][j][0] is not None:
-                    self.SCREEN.blit(self.graphical_board[i][j][0], self.graphical_board[i][j][1])
-                    
         return board, to_move
+
 
     # AI using Minimax algorithm
     def ai_move_fivebyfive(self, board, graphical_board, to_move):
@@ -378,32 +384,36 @@ class Battle:
                 if board[i][j] not in ['X', 'O']:
                     board[i][j] = 'O'
                     score = self.minimax(board, 0, False)
-                    board[i][j] = i * 5 + j + 1  # Reset to original value
+                    board[i][j] = None  # Reset to empty
                     if score > best_score:
                         best_score = score
                         best_move = (i, j)
 
-        if best_move:
+        if best_move is not None:
             board[best_move[0]][best_move[1]] = 'O'
             to_move = 'X'
 
-        self.render_board(board, self.X_IMG, self.O_IMG)
-
-        for i in range(5):
-            for j in range(5):
-                if graphical_board[i][j][0] is not None:
-                    self.SCREEN.blit(self.graphical_board[i][j][0], self.graphical_board[i][j][1])
+        self.render_fivebyfive(board, self.X_IMG, self.O_IMG)
+        pygame.display.update()
 
         return board, to_move
 
-    # Minimax algorithm to improve AI decision-making
+    # Minimax algorithm with additional checks
     def minimax(self, board, depth, is_maximizing):
-        result = self.check_win(board)
-        if result == 'O':
+        result = self.check_win_fivebyfive(board)
+        if result == 'O':  # AI wins
             return 1
-        elif result == 'X':
+        elif result == 'X':  # Opponent wins
             return -1
-        elif result == 'DRAW':
+        elif result == 'DRAW':  # Draw
+            return 0
+
+        # If board is full and no result is found, return draw
+        if not any(board[i][j] not in ['X', 'O'] for i in range(5) for j in range(5)):
+            return 0
+
+        # Optional: Add depth limiting to avoid excessive recursion
+        if depth >= 6:
             return 0
 
         if is_maximizing:
@@ -413,7 +423,7 @@ class Battle:
                     if board[i][j] not in ['X', 'O']:
                         board[i][j] = 'O'
                         score = self.minimax(board, depth + 1, False)
-                        board[i][j] = i * 5 + j + 1
+                        board[i][j] = None  # Undo move
                         best_score = max(score, best_score)
             return best_score
         else:
@@ -423,9 +433,11 @@ class Battle:
                     if board[i][j] not in ['X', 'O']:
                         board[i][j] = 'X'
                         score = self.minimax(board, depth + 1, True)
-                        board[i][j] = i * 5 + j + 1
+                        board[i][j] = None  # Undo move
                         best_score = min(score, best_score)
             return best_score
+
+
 
     def check_win_fivebyfive(self, board):
         # Check rows, columns, and diagonals for five in a row
