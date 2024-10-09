@@ -10,6 +10,12 @@ class Tile(pygame.sprite.Sprite):
         self.image = surf
         self.rect = self.image.get_rect(topleft = pos)
 
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, pos, surf, groups):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_rect(topleft = pos)
+
 class Game:
     def __init__(self) -> None:
         pygame.init()
@@ -65,6 +71,10 @@ class Game:
 
             pygame.display.flip()
             self.clock.tick(60)
+
+    # def load_assets(self):
+    #     BOARD = pygame.imge.load("Graphics/Board.png").convert_alpha()
+    #     FONT = pygame.font.Font("Font/Pixeltype.ttf", 100)
 
     # def load_assets(self):
     #     BOARD = pygame.imge.load("Graphics/Board.png").convert_alpha()
