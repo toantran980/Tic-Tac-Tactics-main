@@ -7,24 +7,28 @@
     "expandedProjectPaths": [
         "."
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "map1.tmx": {
             "scale": 1,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 1166.5,
-                "y": 1117.5
+                "x": 180.5,
+                "y": 537
             }
         },
         "mountain_landscape.tsx": {
+            "dynamicWrapping": true,
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "void-tiles.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 2,
             "scaleInEditor": 1
         }
     },
+    "last.externalTilesetPath": "C:/Users/dell/Downloads",
     "last.imagePath": "C:/Users/dell/Downloads",
     "map.height": 38,
     "map.lastUsedFormat": "tmx",
@@ -35,8 +39,8 @@
     "project": "map.tiled-project",
     "recentFiles": [
         "map1.tmx",
-        "void-tiles.tsx",
-        "mountain_landscape.tsx"
+        "mountain_landscape.tsx",
+        "void-tiles.tsx"
     ],
     "tileset.lastUsedFormat": "tsx"
 }
