@@ -3,7 +3,12 @@ from handle_movements import Handle
 from tic_tac_toe import Battle
 from pytmx.util_pygame import load_pygame
 # from load_images import Image
-#import tic_tac_toe
+
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, pos, surf, groups):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_rect(topleft = pos)
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, surf, groups):
@@ -61,10 +66,15 @@ class Game:
             
             self.handle.handle_mov(event)
             self.screen.blit(self.handle.images[self.handle.curr_image], 
-                             (self.handle.x_axis, self.handle.y_axis))
+                            (self.handle.x_axis, self.handle.y_axis))
+            
 
             pygame.display.flip()
             self.clock.tick(60)
+
+    # def load_assets(self):
+    #     BOARD = pygame.imge.load("Graphics/Board.png").convert_alpha()
+    #     FONT = pygame.font.Font("Font/Pixeltype.ttf", 100)
 
     # def load_assets(self):
     #     BOARD = pygame.imge.load("Graphics/Board.png").convert_alpha()
