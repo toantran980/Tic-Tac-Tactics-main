@@ -56,6 +56,8 @@ class Game:
                         sys.exit()
                     if event.key == pygame.K_b:
                         self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")
+                    if event.key == pygame.K_v:
+                        self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "")
 
             # Clear the screen (optional, if you want to have a clean canvas every frame)
             self.screen.fill((0, 0, 0))  
