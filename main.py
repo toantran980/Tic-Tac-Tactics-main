@@ -50,7 +50,11 @@ class Game:
                         pygame.quit()
                         sys.exit()
                     if event.key == pygame.K_b:
+<<<<<<< HEAD
                         self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")  
+=======
+                        self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")
+>>>>>>> 928be1db18debc1663e39167a1a59cf45a1684da
                     if event.key == pygame.K_v:
                         self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "")
 
