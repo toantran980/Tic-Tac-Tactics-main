@@ -6,17 +6,8 @@ from pytmx.util_pygame import load_pygame
 from tiles import Tile
 # from load_images import Image
 
-<<<<<<< HEAD
 
 
-=======
-class Tile(pygame.sprite.Sprite):
-    def __init__(self, pos, surf, groups):
-        super().__init__(groups)
-        self.image = surf
-        self.rect = self.image.get_rect(topleft = pos)
-    
->>>>>>> 14024b0ae7f7671b0acff1d30b03bb1bbdc12edd
 class Game:
     def __init__(self) -> None:
         pygame.init()
@@ -56,11 +47,7 @@ class Game:
                         pygame.quit()
                         sys.exit()
                     if event.key == pygame.K_b:
-<<<<<<< HEAD
                         self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")  
-=======
-                        self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")
->>>>>>> 928be1db18debc1663e39167a1a59cf45a1684da
                     if event.key == pygame.K_v:
                         self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "")
 
