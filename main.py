@@ -1,20 +1,11 @@
 import pygame, sys
 from handle_movements import Handle
 from tic_tac_toe import Battle
+from tiles import Tile
 from pytmx.util_pygame import load_pygame
 # from load_images import Image
 
-class Tile(pygame.sprite.Sprite):
-    def __init__(self, pos, surf, groups):
-        super().__init__(groups)
-        self.image = surf
-        self.rect = self.image.get_rect(topleft = pos)
 
-class Tile(pygame.sprite.Sprite):
-    def __init__(self, pos, surf, groups):
-        super().__init__(groups)
-        self.image = surf
-        self.rect = self.image.get_rect(topleft = pos)
 
 class Game:
     def __init__(self) -> None:
