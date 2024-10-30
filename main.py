@@ -2,6 +2,7 @@ import pygame, sys
 from handle_movements import Handle
 from tic_tac_toe import Battle
 from pytmx.util_pygame import load_pygame
+from tiles import Tile
 # from load_images import Image
 
 class Tile(pygame.sprite.Sprite):
@@ -9,13 +10,7 @@ class Tile(pygame.sprite.Sprite):
         super().__init__(groups)
         self.image = surf
         self.rect = self.image.get_rect(topleft = pos)
-
-class Tile(pygame.sprite.Sprite):
-    def __init__(self, pos, surf, groups):
-        super().__init__(groups)
-        self.image = surf
-        self.rect = self.image.get_rect(topleft = pos)
-
+    
 class Game:
     def __init__(self) -> None:
         pygame.init()
@@ -55,30 +50,32 @@ class Game:
                         pygame.quit()
                         sys.exit()
                     if event.key == pygame.K_b:
-                        self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")
+                        self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")  
+                    if event.key == pygame.K_v:
+                        self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "")
 
+                #self.handle.handle_mov(event)
             # Clear the screen (optional, if you want to have a clean canvas every frame)
             self.screen.fill((0, 0, 0))  
 
             # Draw the map tiles (using self.sprite_group)
             self.sprite_group.draw(self.screen)
 
-            
             self.handle.handle_mov(event)
-            self.screen.blit(self.handle.images[self.handle.curr_image], 
-                            (self.handle.x_axis, self.handle.y_axis))
-            
+    
+            if 0 <= self.handle.curr_image < len(self.handle.images):
+                self.screen.blit(self.handle.images[self.handle.curr_image], 
+                                (self.handle.x_axis, self.handle.y_axis))
+            else:
+                print(f"Error: curr_image index {self.handle.curr_image} is out of range. Total images: {len(self.handle.images)}")
+                
 
             pygame.display.flip()
             self.clock.tick(60)
 
-    # def load_assets(self):
-    #     BOARD = pygame.imge.load("Graphics/Board.png").convert_alpha()
-    #     FONT = pygame.font.Font("Font/Pixeltype.ttf", 100)
-
-    # def load_assets(self):
-    #     BOARD = pygame.imge.load("Graphics/Board.png").convert_alpha()
-    #     FONT = pygame.font.Font("Font/Pixeltype.ttf", 100)
+    #def load_assets(self):
+        #BOARD = pygame.imge.load("Graphics/Board.png").convert_alpha()
+        #FONT = pygame.font.Font("Font/Pixeltype.ttf", 100)
 
 
 if __name__ == '__main__':
