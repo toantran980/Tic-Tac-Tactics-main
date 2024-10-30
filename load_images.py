@@ -42,26 +42,33 @@ class Image:
             self.idle_images.append(image)
         return self.idle_images
     
-    def load_idle_up_image(self)->list:
-        # for i in range(1, 5):
-        image = pygame.image.load('Character_Sprite/idle_1.png')
-        self.idle_up_image.append(image)
-        return self.idle_up_image
     
-    def load_idle_down_image(self)->list:
-        # for i in range(1, 5):
-        image = pygame.image.load('Character_Sprite/idle_2.png')
-        self.idle_down_image.append(image)
-        return self.idle_down_image
+    def load_idle_image(self, direction: str) -> list:
+        # Dictionary to map directions to their corresponding image file names
+        image_files = {
+            'idle_up': 'Character_Sprite/idle_1.png',
+            'idle_down': 'Character_Sprite/idle_2.png',
+            'idle_left': 'Character_Sprite/idle_3.png',
+            'idle_right': 'Character_Sprite/idle_4.png'
+        }
 
-    def load_idle_left_image(self)->list:
-        # for i in range(1, 5):
-        image = pygame.image.load('Character_Sprite/idle_3.png')
-        self.idle_left_image.append(image)
-        return self.idle_left_image
-
-    def load_idle_right_image(self)->list:
-        # for i in range(1, 5):
-        image = pygame.image.load('Character_Sprite/idle_4.png')
-        self.idle_right_image.append(image)
-        return self.idle_right_image
+        # Check if the provided direction is valid
+        if direction in image_files:
+            # Load the image
+            image = pygame.image.load(image_files[direction])
+            
+            # Append the image to the corresponding list based on the direction
+            if direction == 'idle_up':
+                self.idle_up_image.append(image)
+                return self.idle_up_image
+            elif direction == 'idle_down':
+                self.idle_down_image.append(image)
+                return self.idle_down_image
+            elif direction == 'idle_left':
+                self.idle_left_image.append(image)
+                return self.idle_left_image
+            elif direction == 'idle_right':
+                self.idle_right_image.append(image)
+                return self.idle_right_image
+        else:
+            raise ValueError("Invalid direction. Please use 'up', 'down', 'left', or 'right'.")
