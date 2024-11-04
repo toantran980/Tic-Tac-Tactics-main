@@ -469,6 +469,7 @@ class Battle:
 
     def check_win_fivebyfive(self, board):
         winner = None
+        square_size = 772 // 5  # Each square is 154 pixels for a 5x5 board
 
         # Check rows for a win
         for row in range(5):
@@ -476,7 +477,10 @@ class Battle:
                     and board[row][0] in ['X', 'O']):
                 winner = board[row][0]
                 for col in range(5):
-                    self.graphical_board[row][col][0] = pygame.image.load(f"Graphics/Winning {winner}.png")
+                    winning_img = pygame.image.load(f"Graphics/Winning {winner}.png")
+                    # Scale the image to fit the square
+                    winning_img = pygame.transform.scale(winning_img, (square_size - 10, square_size - 10))
+                    self.graphical_board[row][col][0] = winning_img
                     self.SCREEN.blit(self.graphical_board[row][col][0], self.graphical_board[row][col][1])
                 pygame.display.update()
                 return winner
@@ -487,7 +491,10 @@ class Battle:
                     and board[0][col] in ['X', 'O']):
                 winner = board[0][col]
                 for row in range(5):
-                    self.graphical_board[row][col][0] = pygame.image.load(f"Graphics/Winning {winner}.png")
+                    winning_img = pygame.image.load(f"Graphics/Winning {winner}.png")
+                    # Scale the image to fit the square
+                    winning_img = pygame.transform.scale(winning_img, (square_size - 10, square_size - 10))
+                    self.graphical_board[row][col][0] = winning_img
                     self.SCREEN.blit(self.graphical_board[row][col][0], self.graphical_board[row][col][1])
                 pygame.display.update()
                 return winner
@@ -497,7 +504,10 @@ class Battle:
                 and board[0][0] in ['X', 'O']):
             winner = board[0][0]
             for i in range(5):
-                self.graphical_board[i][i][0] = pygame.image.load(f"Graphics/Winning {winner}.png")
+                winning_img = pygame.image.load(f"Graphics/Winning {winner}.png")
+                # Scale the image to fit the square
+                winning_img = pygame.transform.scale(winning_img, (square_size - 10, square_size - 10))
+                self.graphical_board[i][i][0] = winning_img
                 self.SCREEN.blit(self.graphical_board[i][i][0], self.graphical_board[i][i][1])
             pygame.display.update()
             return winner
@@ -507,7 +517,10 @@ class Battle:
                 and board[0][4] in ['X', 'O']):
             winner = board[0][4]
             for i in range(5):
-                self.graphical_board[i][4 - i][0] = pygame.image.load(f"Graphics/Winning {winner}.png")
+                winning_img = pygame.image.load(f"Graphics/Winning {winner}.png")
+                # Scale the image to fit the square
+                winning_img = pygame.transform.scale(winning_img, (square_size - 10, square_size - 10))
+                self.graphical_board[i][4 - i][0] = winning_img
                 self.SCREEN.blit(self.graphical_board[i][4 - i][0], self.graphical_board[i][4 - i][1])
             pygame.display.update()
             return winner
@@ -517,4 +530,5 @@ class Battle:
             return "DRAW"
 
         return None
+
 
