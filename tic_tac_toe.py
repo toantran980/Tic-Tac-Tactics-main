@@ -24,14 +24,6 @@ class Battle:
     # pass a screen to the function
     # should eventually also pass each image so we are not being redundant
     def __init__(self, SCREEN, BOARD, X_IMG, O_IMG, FONT, gametype):
-        # load font
-        # FONT = pygame.font.Font()
-        # load board
-        # BOARD = pygame.image.load()
-        # load image
-        # X_IMG = pygame.image.load()
-        # load image
-        # O_IMG = pygame.image.load()
 
         self.SCREEN = SCREEN
         self.BOARD = BOARD
@@ -51,7 +43,7 @@ class Battle:
                     [11, 12, 13, 14, 15], [16, 17, 18, 19, 20], 
                     [21, 22, 23, 24, 25]]
         self.graphical_board = [[[None, None] for _ in range(5)] for _ in range(5)]
-
+        self.ai_move_count = 0
         self.to_move = 'X'
         square_size = 772 // 5  # Each square is 154 pixels wide for a 5x5 board
         x_offset = 64  # Offset from the left edge of the screen
@@ -91,7 +83,7 @@ class Battle:
                         self.to_move = 'X'
                         square_size = 772 // 5  # Each square is 154 pixels wide for a 5x5 board
                         x_offset = 64  # Offset from the left edge of the screen
-
+                        self.ai_move_count = 0
                         # Fill background and draw the board grid
                         self.SCREEN.fill(self.BG_COLOR)
 
@@ -394,42 +386,47 @@ class Battle:
 
         return board, to_move
 
-
-    # AI using Minimax algorithm
-    # def ai_move_fivebyfive(self, board, graphical_board, to_move):
-    #     best_score = float('-inf')
-    #     best_move = None
-
-    #     for i in range(5):
-    #         for j in range(5):
-    #             if board[i][j] not in ['X', 'O']:
-    #                 board[i][j] = 'O'
-    #                 score = self.minimax(board, 0, False)
-    #                 board[i][j] = None  # Reset to empty
-    #                 if score > best_score:
-    #                     best_score = score
-    #                     best_move = (i, j)
-
-    #     if best_move is not None:
-    #         board[best_move[0]][best_move[1]] = 'O'
-    #         to_move = 'X'
-
-    #     self.render_fivebyfive(board, self.X_IMG, self.O_IMG)
-    #     pygame.display.update()
-
-    #     return board, to_move
-
     def ai_move_fivebyfive(self, board, graphical_board, to_move):
-        # Collect all available (empty) positions on the board
-        available_moves = [
-            (i, j) for i in range(5) for j in range(5) if board[i][j] not in ['X', 'O']
-        ]
+        self.ai_move_count += 1  # Increment the AI move count
 
-        # If there are any available moves, pick one randomly
-        if available_moves:
-            i, j = random.choice(available_moves)
-            board[i][j] = 'O'
-            to_move = 'X'  # Switch turn back to the player
+        # For the first three moves, pick a random available move
+        if self.ai_move_count <= 3:
+            available_moves = [
+                (i, j) for i in range(5) for j in range(5) if board[i][j] not in ['X', 'O']
+            ]
+            if available_moves:
+                i, j = random.choice(available_moves)
+                board[i][j] = 'O'
+        else:
+            best_move = None
+            best_score = -float('inf')
+
+            # Evaluate all available moves
+            for i in range(5):
+                for j in range(5):
+                    if board[i][j] not in ['X', 'O']:
+                        # Simulate the AI move
+                        board[i][j] = 'O'
+                        score = self.evaluate_board(board, 'O')  # Heuristic score for AI
+                        board[i][j] = None  # Undo the move
+
+                        if score > best_score:
+                            best_score = score
+                            best_move = (i, j)
+
+            # If no strategic move is found, pick a random available move
+            if best_move:
+                i, j = best_move
+                board[i][j] = 'O'
+            else:
+                available_moves = [
+                    (i, j) for i in range(5) for j in range(5) if board[i][j] not in ['X', 'O']
+                ]
+                if available_moves:
+                    i, j = random.choice(available_moves)
+                    board[i][j] = 'O'
+
+        to_move = 'X'  # Switch turn back to the player
 
         # Render the board with the new move
         self.render_fivebyfive(board, self.X_IMG, self.O_IMG)
@@ -437,47 +434,38 @@ class Battle:
 
         return board, to_move
 
+    def evaluate_board(self, board, player):
+        """
+        A simple heuristic evaluation function for the board.
+        Gives a score based on potential lines of alignment.
+        """
+        opponent = 'X' if player == 'O' else 'O'
+        score = 0
 
-    # Minimax algorithm with additional checks
-    def minimax(self, board, depth, is_maximizing):
-        result = self.check_win_fivebyfive(board)
-        if result == 'O':  # AI wins
-            return 1
-        elif result == 'X':  # Opponent wins
-            return -1
-        elif result == 'DRAW':  # Draw
-            return 0
+        # Check rows, columns, and diagonals for potential wins or blocks
+        for i in range(5):
+            score += self.evaluate_line([board[i][j] for j in range(5)], player, opponent)  # Row
+            score += self.evaluate_line([board[j][i] for j in range(5)], player, opponent)  # Column
 
-        # If board is full and no result is found, return draw
-        if not any(board[i][j] not in ['X', 'O'] for i in range(5) for j in range(5)):
-            return 0
+        # Check diagonals
+        score += self.evaluate_line([board[i][i] for i in range(5)], player, opponent)  # Main diagonal
+        score += self.evaluate_line([board[i][4 - i] for i in range(5)], player, opponent)  # Anti-diagonal
 
-        # Optional: Add depth limiting to avoid excessive recursion
-        if depth >= 6:
-            return 0
+        return score
 
-        if is_maximizing:
-            best_score = float('-inf')
-            for i in range(5):
-                for j in range(5):
-                    if board[i][j] not in ['X', 'O']:
-                        board[i][j] = 'O'
-                        score = self.minimax(board, depth + 1, False)
-                        board[i][j] = None  # Undo move
-                        best_score = max(score, best_score)
-            return best_score
-        else:
-            best_score = float('inf')
-            for i in range(5):
-                for j in range(5):
-                    if board[i][j] not in ['X', 'O']:
-                        board[i][j] = 'X'
-                        score = self.minimax(board, depth + 1, True)
-                        board[i][j] = None  # Undo move
-                        best_score = min(score, best_score)
-            return best_score
+    def evaluate_line(self, line, player, opponent):
+        """
+        Evaluates a line (row, column, or diagonal) and returns a score.
+        More aligned 'O's give positive scores, aligned 'X's give negative scores.
+        """
+        player_count = line.count(player)
+        opponent_count = line.count(opponent)
 
-
+        if player_count > 0 and opponent_count == 0:
+            return player_count  # Positive score if AI has pieces and opponent has none
+        elif opponent_count > 0 and player_count == 0:
+            return -opponent_count  # Negative score if opponent has pieces and AI has none
+        return 0  # Neutral score if both or none have pieces
 
     def check_win_fivebyfive(self, board):
         winner = None
