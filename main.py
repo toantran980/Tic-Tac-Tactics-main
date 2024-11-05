@@ -1,6 +1,7 @@
 import pygame, sys
 from handle_movements import Handle
 from tic_tac_toe import Battle
+from tiles import Tile
 from pytmx.util_pygame import load_pygame
 from tiles import Tile
 # from load_images import Image
