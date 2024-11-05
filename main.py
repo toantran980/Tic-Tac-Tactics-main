@@ -5,19 +5,13 @@ from pytmx.util_pygame import load_pygame
 from tiles import Tile
 # from load_images import Image
 
-class Tile(pygame.sprite.Sprite):
-    def __init__(self, pos, surf, groups):
-        super().__init__(groups)
-        self.image = surf
-        self.rect = self.image.get_rect(topleft = pos)
-    
 class Game:
     def __init__(self) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((1280,720))
 
         self.sprite_group = pygame.sprite.Group()
-
+        
         # Load the map
         tmx_data = load_pygame('Graphics/map1.tmx')
 
@@ -50,15 +44,10 @@ class Game:
                         pygame.quit()
                         sys.exit()
                     if event.key == pygame.K_b:
-<<<<<<< HEAD
                         self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")  
-=======
-                        self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")
->>>>>>> 928be1db18debc1663e39167a1a59cf45a1684da
                     if event.key == pygame.K_v:
                         self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "")
 
-                #self.handle.handle_mov(event)
             # Clear the screen (optional, if you want to have a clean canvas every frame)
             self.screen.fill((0, 0, 0))  
 
@@ -66,10 +55,21 @@ class Game:
             self.sprite_group.draw(self.screen)
 
             self.handle.handle_mov(event)
-    
+
+
             if 0 <= self.handle.curr_image < len(self.handle.images):
-                self.screen.blit(self.handle.images[self.handle.curr_image], 
-                                (self.handle.x_axis, self.handle.y_axis))
+                image_x = self.handle.x_axis + (self.handle.width - self.handle.images[self.handle.curr_image].get_width()) // 2
+                image_y = self.handle.y_axis + (self.handle.height - self.handle.images[self.handle.curr_image].get_height()) // 2
+
+                #self.screen.blit(self.handle.images[self.handle.curr_image], 
+                                #(self.handle.x_axis, self.handle.y_axis))
+
+                self.screen.blit(self.handle.images[self.handle.curr_image], (image_x, image_y))
+                
+                character_rect = pygame.Rect(self.handle.x_axis, self.handle.y_axis, 
+                                            self.handle.width, self.handle.height)
+                # Draw the rectangle (for visualization)
+                pygame.draw.rect(self.screen, (255, 0, 0), character_rect, 2)  # Red rectangle with a thickness of 2 pixels
             else:
                 print(f"Error: curr_image index {self.handle.curr_image} is out of range. Total images: {len(self.handle.images)}")
                 
