@@ -61,10 +61,27 @@ class Game:
             self.handle.handle_mov(event)
 
             # Draw the character at the correct position relative to the camera
+            # if 0 <= self.handle.curr_image < len(self.handle.images):
+            #     character_pos = (self.handle.x_axis - self.camera_offset.x, 
+            #                      self.handle.y_axis - self.camera_offset.y)
+            #     self.screen.blit(self.handle.images[self.handle.curr_image], character_pos)
+
             if 0 <= self.handle.curr_image < len(self.handle.images):
-                character_pos = (self.handle.x_axis - self.camera_offset.x, 
-                                 self.handle.y_axis - self.camera_offset.y)
-                self.screen.blit(self.handle.images[self.handle.curr_image], character_pos)
+                image_x = self.handle.x_axis + (self.handle.width - self.handle.images[self.handle.curr_image].get_width()) // 2
+                image_y = self.handle.y_axis + (self.handle.height - self.handle.images[self.handle.curr_image].get_height()) // 2
+
+                #self.screen.blit(self.handle.images[self.handle.curr_image], 
+                                #(self.handle.x_axis, self.handle.y_axis))
+
+                self.screen.blit(self.handle.images[self.handle.curr_image], (image_x, image_y))
+                
+                character_rect = pygame.Rect(self.handle.x_axis, self.handle.y_axis, 
+                                            self.handle.width, self.handle.height)
+                # Draw the rectangle (for visualization)
+                pygame.draw.rect(self.screen, (255, 0, 0), character_rect, 2)  # Red rectangle with a thickness of 2 pixels
+            else:
+                print(f"Error: curr_image index {self.handle.curr_image} is out of range. Total images: {len(self.handle.images)}")
+                
 
             pygame.display.flip()
             self.clock.tick(60)

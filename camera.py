@@ -1,7 +1,7 @@
 import pygame
 
-class Camera(pygame.sprite.Group){
+"""class Camera(pygame.sprite.Group){
     def __init__(self):
     
 
-}
+}"""
