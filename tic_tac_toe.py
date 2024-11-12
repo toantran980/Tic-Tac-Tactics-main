@@ -1,24 +1,6 @@
 import pygame, sys
 import random
 
-# will eventuall pass which boss is being faced
-# will need to create a function for each boss
-# will need a function for each ability
-
-# Work in progress
-# def __init__(self, player_abilites, opponent_abilites, bg_surf, fonts):
-    #     self.display_surface = pygame.display.get_surface()
-    #     self.bg_surf = bg_surf
-    #     self.player_abilites = player_abilites
-    #     self.opponent_abilites = opponent_abilites
-    #     self.fonts = fonts
-    #     self.ability_data = {'player': player_abilites, 'opponent': opponent_abilites}
-
-    # #def setup(self):
-
-    # def update(self, dt):
-    #     #outputs background, currently don't have background
-    #     self.display_surface.blit(self.bg_surf, (0,0))
 class Battle:
 
     # pass a screen to the function
