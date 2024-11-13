@@ -13,6 +13,7 @@ class Battle:
         self.O_IMG = O_IMG
         self.FONT = FONT
         self.BG_COLOR = (214, 201, 227)
+        self.clear_mode = False
 
         if gametype == "threebythree":
             self.threebythree()
@@ -29,6 +30,7 @@ class Battle:
         self.to_move = 'X'
         square_size = 772 // 5  # Each square is 154 pixels wide for a 5x5 board
         x_offset = 64  # Offset from the left edge of the screen
+        
 
         # Fill background and draw the board grid
         self.SCREEN.fill(self.BG_COLOR)
@@ -53,8 +55,18 @@ class Battle:
                     pygame.quit()
                     sys.exit()
 
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_1:  # check if '1' key is pressed
+                        self.clear_mode = True
+                        print("Clear line mode activated! Click on a line to clear.")
+
+
                 if event.type == pygame.MOUSEBUTTONDOWN and con:
-                    self.board, self.to_move = self.add_XO_fivebyfive(self.board, self.graphical_board, self.to_move)
+                    if self.clear_mode:
+                        self.clear_line()
+                        self.clear_mode = False # exit clear mode after clearing line
+                    elif con:
+                        self.board, self.to_move = self.add_XO_fivebyfive(self.board, self.graphical_board, self.to_move)
                     
                     if game_finished:
                         self.board = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], 
@@ -63,6 +75,7 @@ class Battle:
                         self.graphical_board = [[[None, None] for _ in range(5)] for _ in range(5)]
 
                         self.to_move = 'X'
+                        game_finished = False
                         square_size = 772 // 5  # Each square is 154 pixels wide for a 5x5 board
                         x_offset = 64  # Offset from the left edge of the screen
                         self.ai_move_count = 0
@@ -74,6 +87,7 @@ class Battle:
                             pygame.draw.line(self.SCREEN, (0, 0, 50), (i * square_size + x_offset, 0), (i * square_size + x_offset, 772), 10)
 
                         pygame.display.update()
+                        
 
                     result = self.check_win_fivebyfive(self.board)
                     if result is not None:
@@ -512,3 +526,75 @@ class Battle:
             return "DRAW"
 
         return None
+
+    def clear_line(self):
+        # Check if it's the first or second click
+        if not hasattr(self, 'first_click'):
+            # First click: record the starting position
+            self.first_click = pygame.mouse.get_pos()
+            print("First corner selected. Please select the second corner.")
+        else:
+            # Second click: record the ending position
+            self.second_click = pygame.mouse.get_pos()
+
+            # Calculate start and end positions in terms of board cells
+            square_size = 772 // 5
+            x_offset = 64
+            start_x, start_y = self.first_click
+            end_x, end_y = self.second_click
+
+            # Determine the row and column indices of the start and end points
+            start_row = start_y // square_size
+            start_col = (start_x - x_offset) // square_size
+            end_row = end_y // square_size
+            end_col = (end_x - x_offset) // square_size
+
+            # Ensure the clicks are within the bounds of the board
+            if any(i < 0 or i > 4 for i in [start_row, start_col, end_row, end_col]):
+                print("Invalid selection. Please select corners within the board boundaries.")
+                del self.first_click, self.second_click
+                return
+
+            # Determine the type of line: row, column, or diagonal
+            if start_row == end_row:  # Row
+                for col in range(min(start_col, end_col), max(start_col, end_col) + 1):
+                    self.board[start_row][col] = None
+                    self.graphical_board[start_row][col] = [None, None]
+            elif start_col == end_col:  # Column
+                for row in range(min(start_row, end_row), max(start_row, end_row) + 1):
+                    self.board[row][start_col] = None
+                    self.graphical_board[row][start_col] = [None, None]
+            elif abs(start_row - end_row) == abs(start_col - end_col):  # Diagonal
+                step_row = 1 if end_row > start_row else -1
+                step_col = 1 if end_col > start_col else -1
+                for i in range(abs(start_row - end_row) + 1):
+                    row = start_row + i * step_row
+                    col = start_col + i * step_col
+                    self.board[row][col] = None
+                    self.graphical_board[row][col] = [None, None]
+            else:
+                print("Invalid line selection. Please select a row, column, or diagonal.")
+                del self.first_click, self.second_click
+                return
+
+            # Reset for next use
+            del self.first_click, self.second_click
+
+            # Redraw the board to visually clear the line
+            self.SCREEN.fill(self.BG_COLOR)
+            for i in range(1, 5):
+                pygame.draw.line(self.SCREEN, (0, 0, 50), (x_offset, i * square_size), (772 + x_offset, i * square_size), 10)
+                pygame.draw.line(self.SCREEN, (0, 0, 50), (i * square_size + x_offset, 0), (i * square_size + x_offset, 772), 10)
+
+            # Redraw remaining X and O images
+            for row in range(5):
+                for col in range(5):
+                    if self.board[row][col] == 'X':
+                        self.SCREEN.blit(self.X_IMG, (x_offset + col * square_size + 5, row * square_size + 5))
+                    elif self.board[row][col] == 'O':
+                        self.SCREEN.blit(self.O_IMG, (x_offset + col * square_size + 5, row * square_size + 5))
+
+            pygame.display.update()
+            print("Line cleared!")
+
+
