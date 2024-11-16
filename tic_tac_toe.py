@@ -28,6 +28,8 @@ class Battle:
         self.graphical_board = [[[None, None] for _ in range(5)] for _ in range(5)]
         self.ai_move_count = 0
         self.to_move = 'X'
+        self.double_placement_mode = False  # Mode for double placement
+        self.first_placement = None         # Store first placement in double placement mode
         square_size = 772 // 5  # Each square is 154 pixels wide for a 5x5 board
         x_offset = 64  # Offset from the left edge of the screen
         
@@ -59,12 +61,21 @@ class Battle:
                     if event.key == pygame.K_1:  # check if '1' key is pressed
                         self.clear_mode = True
                         print("Clear line mode activated! Click on a line to clear.")
-
-
+                    if event.key == pygame.K_2 and self.to_move == 'X':  # Double placement mode
+                        self.double_placement_mode = True
+                        self.first_placement = None
+                        print("Double placement mode activated! Place two X's adjacent to each other.")
+                
                 if event.type == pygame.MOUSEBUTTONDOWN and con:
+                    x, y = pygame.mouse.get_pos()
+                    col = (x - x_offset) // square_size
+                    row = y // square_size
+
                     if self.clear_mode:
                         self.clear_line()
                         self.clear_mode = False # exit clear mode after clearing line
+                    elif self.double_placement_mode and self.to_move == 'X':
+                        self.handle_double_placement(row, col)  # Handle both placements
                     elif con:
                         self.board, self.to_move = self.add_XO_fivebyfive(self.board, self.graphical_board, self.to_move)
                     
@@ -598,3 +609,42 @@ class Battle:
             print("Line cleared!")
 
 
+    # Updated handle_double_placement method
+    def handle_double_placement(self, row, col):
+        if self.first_placement is None:
+            # Place the first X
+            if self.board[row][col] not in ['X', 'O']:
+                self.board[row][col] = 'X'
+                self.graphical_board[row][col] = ['X', (col, row)]
+                square_size = 772 // 5
+                x_offset = 64
+                x = col * square_size + x_offset + 5
+                y = row * square_size + 5
+                self.SCREEN.blit(self.X_IMG, (x, y))
+                pygame.display.update()
+                self.first_placement = (row, col)
+                print("First X placed. Select an adjacent position for the second X.")
+            else:
+                print("Invalid position! Please select an empty spot.")
+        else:
+            # Validate and place the second X
+            row_diff = abs(row - self.first_placement[0])
+            col_diff = abs(col - self.first_placement[1])
+            if (row_diff <= 1 and col_diff <= 1) and (row_diff + col_diff > 0):  # Ensure adjacent
+                if self.board[row][col] not in ['X', 'O']:
+                    self.board[row][col] = 'X'
+                    self.graphical_board[row][col] = ['X', (col, row)]
+                    square_size = 772 // 5
+                    x_offset = 64
+                    x = col * square_size + x_offset + 5
+                    y = row * square_size + 5
+                    self.SCREEN.blit(self.X_IMG, (x, y))
+                    pygame.display.update()
+                    self.first_placement = None
+                    self.double_placement_mode = False  # Exit double placement mode
+                    self.to_move = 'O'  # Switch turn
+                    print("Second X placed. Turn ends.")
+                else:
+                    print("Invalid position! Please select an empty spot.")
+            else:
+                print("Invalid position! Select an adjacent position.")
