@@ -29,6 +29,7 @@ class Battle:
         self.ai_move_count = 0
         self.to_move = 'X'
         self.double_placement_mode = False  # Mode for double placement
+        self.remove_box_mode = False
         self.first_placement = None         # Store first placement in double placement mode
         square_size = 772 // 5  # Each square is 154 pixels wide for a 5x5 board
         x_offset = 64  # Offset from the left edge of the screen
@@ -65,6 +66,10 @@ class Battle:
                         self.double_placement_mode = True
                         self.first_placement = None
                         print("Double placement mode activated! Place two X's adjacent to each other.")
+                    if event.key == pygame.K_3 and self.to_move == 'X':  # Activate remove box mode
+                        self.remove_box_mode = True
+                        self.box_corner_1 = None
+                        print("Remove 2x2 box mode activated! Select two diagonal corners of the box to remove.")
                 
                 if event.type == pygame.MOUSEBUTTONDOWN and con:
                     x, y = pygame.mouse.get_pos()
@@ -76,6 +81,8 @@ class Battle:
                         self.clear_mode = False # exit clear mode after clearing line
                     elif self.double_placement_mode and self.to_move == 'X':
                         self.handle_double_placement(row, col)  # Handle both placements
+                    elif self.remove_box_mode and self.to_move == 'X':
+                        self.handle_remove_box(row, col)
                     elif con:
                         self.board, self.to_move = self.add_XO_fivebyfive(self.board, self.graphical_board, self.to_move)
                     
@@ -648,3 +655,33 @@ class Battle:
                     print("Invalid position! Please select an empty spot.")
             else:
                 print("Invalid position! Select an adjacent position.")
+
+    def handle_remove_box(self, row, col):
+        if self.box_corner_1 is None:
+            # Select the first corner of the box
+            self.box_corner_1 = (row, col)
+            print(f"First corner selected at ({row}, {col}). Select the opposite diagonal corner.")
+        else:
+            # Select the second corner and validate
+            row1, col1 = self.box_corner_1
+            if abs(row - row1) == 1 and abs(col - col1) == 1:  # Ensure valid 2x2 box
+                # Clear the 2x2 box
+                rows = [row1, row]
+                cols = [col1, col]
+                for r in rows:
+                    for c in cols:
+                        if self.board[r][c] in ['X', 'O']:
+                            self.board[r][c] = r * 5 + c + 1  # Reset the cell
+                            self.graphical_board[r][c] = [None, None]
+                            square_size = 772 // 5
+                            x_offset = 64
+                            x = c * square_size + x_offset
+                            y = r * square_size
+                            pygame.draw.rect(self.SCREEN, self.BG_COLOR, (x + 5, y + 5, square_size - 10, square_size - 10))
+                pygame.display.update()
+                print("2x2 box removed. Turn ends.")
+                self.to_move = 'O'  # Switch turn
+            else:
+                print("Invalid second corner! Select a valid diagonal corner.")
+            self.box_corner_1 = None
+            self.remove_box_mode = False
