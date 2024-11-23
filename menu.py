@@ -38,7 +38,7 @@ class GameMenu:
         self.font = pygame.font.Font(None, 74)
         self.background = pygame.image.load('Graphics/map1.png')
         self.background = pygame.transform.scale(self.background, (1280, 720))
-        self.title_text = self.font.render("Welcome to Tic Tac Tic Combatants", True, (189, 0, 255))
+        self.title_text = self.font.render("Welcome to Tic-Tac-Tactics", True, (189, 0, 255))
         self.center_title = self.title_text.get_rect(center=(screen.get_width() // 2, 200))
 
         button_width = 200
