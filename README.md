@@ -10,8 +10,8 @@ Jay Gallardo
 
  
 
-## Project: Adventure Game with TicTacToe combat
-Description:
+## Description: Adventure Game with TicTacToe combat
+
 
 A top down game of a dystopian mob-ran city in crumbles where a rebel must defeat the mob bosses with advanced games of tic-tac-toe.
 
