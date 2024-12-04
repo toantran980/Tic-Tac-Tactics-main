@@ -1,6 +1,6 @@
 # Tic-Tac-Tactics
 
-Team:
+
 
 Toan Tran
 
