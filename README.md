@@ -18,13 +18,12 @@ Project: Adventure Game with TicTacToe combat
 
 Languages: 
 
-c++
 python
 github
 pygame
-others..
+
  
 
 Description:
 
-We want to create a top-down game like old school Pokémon where you explore a world, collect items, battle opponents with a pop up game of tic-tac-toe. 
+We want to create a top-down game like old school Pokémon where you explore a world and battle opponents with a pop up game of tic-tac-toe. 
