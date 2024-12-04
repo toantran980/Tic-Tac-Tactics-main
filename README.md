@@ -15,13 +15,12 @@ Jay Gallardo
 
 A top down game of a dystopian mob-ran city in crumbles where a rebel must defeat the mob bosses with advanced games of tic-tac-toe.
 
-Languages: 
-
+# Languages and Programs Used: 
 python
 github
 pygame
 
-# Pygame
+## Pygame
 Pygame is a set of Python modules designed for writing games. It is written on top of the excellent SDL library. This allows you to create fully featured games and multimedia programs in the python language.
 
 ## Installation
