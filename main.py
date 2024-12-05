@@ -14,6 +14,8 @@ class Game:
 
         # Load the map
         tmx_data = load_pygame('Graphics/map1.tmx')
+        self.map_width = tmx_data.width * 128  # Map width in pixels
+        self.map_height = tmx_data.height * 128  # Map height in pixels
 
         # Cycle through all layers and create tiles
         for layer in tmx_data.layers:
@@ -30,11 +32,18 @@ class Game:
         self.O_IMG = pygame.image.load("Graphics/O.png")
         self.FONT = pygame.font.Font("Font/Pixeltype.ttf")
 
-
     def update_camera(self):
-            # Center the camera on the player
-            self.camera_offset.x = self.handle.x_axis - self.screen.get_width() // 2
-            self.camera_offset.y = self.handle.y_axis - self.screen.get_height() // 2
+        """Update the camera's position based on the character's position."""
+        screen_center = pygame.Vector2(self.screen.get_width() // 2, self.screen.get_height() // 2)
+        
+        # Calculate the target camera offset
+        target_offset_x = self.handle.rect.centerx - screen_center.x
+        target_offset_y = self.handle.rect.centery - screen_center.y
+        
+        # Clamp the camera offset to the map boundaries
+        self.camera_offset.x = max(0, min(target_offset_x, self.map_width - self.screen.get_width()))
+        self.camera_offset.y = max(0, min(target_offset_y, self.map_height - self.screen.get_height()))
+
 
     def run(self) -> None:
         menu = GameMenu(self.screen)
@@ -47,6 +56,15 @@ class Game:
                     is_running = False
                     pygame.quit()
                     sys.exit()
+                if event.type == pygame.K_q:
+                    is_running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        is_running = False
+                    if event.key == pygame.K_b:
+                        self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")
+                    if event.key == pygame.K_v:
+                        self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "")
 
                 if in_menu:
                     menu.display_menu()
@@ -61,34 +79,27 @@ class Game:
                     elif action == "restart":
                         print("Restarting game...")
                         in_menu = False  # Restart is treated like start here
-                    
 
             self.handle.handle_mov(event)
 
             if not in_menu:
+                self.update_camera()  # Update camera position
                 self.screen.fill((0, 0, 0))
-                self.update_camera()
 
                 for sprite in self.sprite_group:
                     offset_pos = sprite.rect.topleft - self.camera_offset
                     self.screen.blit(sprite.image, offset_pos)
 
+                # Render the player at its adjusted position
+                character_pos = self.handle.rect.topleft - self.camera_offset
                 if 0 <= self.handle.curr_image < len(self.handle.images):
-                    image_x = self.handle.x_axis + (self.handle.width - self.handle.images[self.handle.curr_image].get_width()) // 2
-                    image_y = self.handle.y_axis + (self.handle.height - self.handle.images[self.handle.curr_image].get_height()) // 2
-                    self.screen.blit(self.handle.images[self.handle.curr_image], (image_x, image_y))
-
-                    self.screen.blit(self.handle.images[self.handle.curr_image], (image_x, image_y))
-                    
-                    character_rect = pygame.Rect(self.handle.x_axis, self.handle.y_axis, 
-                                                self.handle.width, self.handle.height)
-                    # Draw the rectangle (for visualization)
-                    pygame.draw.rect(self.screen, (255, 0, 0), character_rect, 2)  # Red rectangle with a thickness of 2 pixels
+                    self.screen.blit(self.handle.images[self.handle.curr_image], character_pos)
                 else:
                     print(f"Error: curr_image index {self.handle.curr_image} is out of range. Total images: {len(self.handle.images)}")
 
                 pygame.display.flip()
                 self.clock.tick(60)
+
 
 
 if __name__ == '__main__':
