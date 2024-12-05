@@ -1,8 +1,6 @@
 # Tic-Tac-Tactics
 
-Team 8:
 
-Students:
 
 Toan Tran
 
@@ -12,19 +10,26 @@ Jay Gallardo
 
  
 
-Project: Adventure Game with TicTacToe combat
+## Description: Adventure Game with TicTacToe combat
 
- 
 
-Languages: 
+A top down game of a dystopian mob-ran city in crumbles where a rebel must defeat the mob bosses with advanced games of tic-tac-toe.
 
-c++
+# Languages and Programs Used: 
 python
 github
 pygame
-others..
- 
 
-Description:
+## Pygame
+Pygame is a set of Python modules designed for writing games. It is written on top of the excellent SDL library. This allows you to create fully featured games and multimedia programs in the python language.
 
-We want to create a top-down game like old school Pokémon where you explore a world, collect items, battle opponents with a pop up game of tic-tac-toe. 
+## Installation
+
+Use the package manager to install pygame
+
+```bash
+py -m pip install -U pygame --user
+```
+
+
+
