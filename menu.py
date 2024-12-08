@@ -1,4 +1,8 @@
 import pygame
+<<<<<<< HEAD
+=======
+import sys
+>>>>>>> 3b83eb328e66b97704fd18ccc592e52cf460b198
 
 class Button:
     def __init__(self, x, y, width, height, text, color, hover_color):
@@ -44,9 +48,15 @@ class GameMenu:
         button_height = 50
         button_x = (screen.get_width() - button_width) // 2
 
+<<<<<<< HEAD
         self.start_button = Button(button_x, 300, button_width, button_height, "START", (46, 204, 113), (2, 113, 72))
         self.exit_button = Button(button_x, 400, button_width, button_height, "EXIT", (255, 0, 0), (139, 0, 0))
         self.restart_button = Button(button_x, 500, button_width, button_height, "RESTART", (255, 223, 0), (186, 142, 35))
+=======
+        self.start_button = Button(button_x, 300, button_width, button_height, "START", (46, 204, 113), (39, 174, 96))
+        self.exit_button = Button(button_x, 400, button_width, button_height, "EXIT", (255, 0, 0), (139, 0, 0))
+        self.restart_button = Button(button_x, 500, button_width, button_height, "RESTART", (255, 223, 0), (218, 190, 0))
+>>>>>>> 3b83eb328e66b97704fd18ccc592e52cf460b198
 
     def display_menu(self):
         self.screen.blit(self.background, (0, 0))
@@ -64,4 +74,7 @@ class GameMenu:
         if self.restart_button.handle_event(event):
             return "restart"
         return None
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3b83eb328e66b97704fd18ccc592e52cf460b198

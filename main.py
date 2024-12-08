@@ -108,6 +108,7 @@ class Game:
                     npc.draw(self.camera_offset)  # Draw the NPC relative to the camera
 
                     # Check collision and if the NPC is not permanently defeated
+<<<<<<< HEAD
                     if self.handle.rect.colliderect(npc.rect): #and not npc.deafeated:  
                         pygame.time.delay(1000)  # Pause for 1000 milliseconds (1.0 seconds)
 
@@ -121,6 +122,48 @@ class Game:
                                     sys.exit()
                                 if event.type == pygame.MOUSEBUTTONDOWN:  # Exit dialogue on mouse click
                                     wait = False
+=======
+                    if self.handle.rect.colliderect(npc.rect) and not npc.deafeated:  
+                        pygame.time.delay(1000)  # Pause for 1000 milliseconds (1.0 seconds)
+
+                        # Interaction loop to show dialogue
+                        wait = True
+                        while wait:
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    is_running = False
+                                    pygame.quit()
+                                    sys.exit()
+                                if event.type == pygame.MOUSEBUTTONDOWN:  # Exit dialogue on mouse click
+                                    wait = False
+
+                            # Draw the game screen
+                            self.screen.fill((0, 0, 0))  # Clear the screen
+                            self.update_camera()  # Update the camera position
+
+                            # Draw all game elements
+                            for sprite in self.sprite_group:
+                                offset_pos = sprite.rect.topleft - self.camera_offset
+                                self.screen.blit(sprite.image, offset_pos)
+
+                            # Draw player
+                            character_pos = self.handle.rect.topleft - self.camera_offset
+                            self.screen.blit(self.handle.images[self.handle.curr_image], character_pos)
+
+                            # Draw the NPC and dialogue box
+                            npc.draw(self.camera_offset)
+                            npc.draw_dialogue_box()  # Show dialogue box for the colliding NPC
+
+                            pygame.display.flip()  # Update the display
+                            self.clock.tick(60)  # Limit the frame rate to 60 FPS
+
+                        # After dialogue, start the battle
+                        self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")
+                        
+                pygame.display.flip()
+                self.clock.tick(60)
+
+>>>>>>> 3b83eb328e66b97704fd18ccc592e52cf460b198
 
                             # Draw the game screen
                             self.screen.fill((0, 0, 0))  # Clear the screen

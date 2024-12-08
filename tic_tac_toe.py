@@ -621,6 +621,11 @@ class Battle:
         pygame.display.update()
         print("Line cleared!")
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 3b83eb328e66b97704fd18ccc592e52cf460b198
     # Updated handle_double_placement method
     def handle_double_placement(self, row, col):
         if self.first_placement is None:

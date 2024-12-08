@@ -54,5 +54,3 @@ class Image:
 
         else:
             raise ValueError("Invalid direction provided.")
-        
-        
