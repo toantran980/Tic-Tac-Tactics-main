@@ -1,24 +1,6 @@
 import pygame, sys
 import random
 
-# will eventuall pass which boss is being faced
-# will need to create a function for each boss
-# will need a function for each ability
-
-# Work in progress
-# def __init__(self, player_abilites, opponent_abilites, bg_surf, fonts):
-    #     self.display_surface = pygame.display.get_surface()
-    #     self.bg_surf = bg_surf
-    #     self.player_abilites = player_abilites
-    #     self.opponent_abilites = opponent_abilites
-    #     self.fonts = fonts
-    #     self.ability_data = {'player': player_abilites, 'opponent': opponent_abilites}
-
-    # #def setup(self):
-
-    # def update(self, dt):
-    #     #outputs background, currently don't have background
-    #     self.display_surface.blit(self.bg_surf, (0,0))
 class Battle:
 
     # pass a screen to the function
@@ -31,6 +13,7 @@ class Battle:
         self.O_IMG = O_IMG
         self.FONT = FONT
         self.BG_COLOR = (214, 201, 227)
+        self.clear_mode = False
 
         if gametype == "threebythree":
             self.threebythree()
@@ -45,8 +28,12 @@ class Battle:
         self.graphical_board = [[[None, None] for _ in range(5)] for _ in range(5)]
         self.ai_move_count = 0
         self.to_move = 'X'
+        self.double_placement_mode = False  # Mode for double placement
+        self.remove_box_mode = False
+        self.first_placement = None         # Store first placement in double placement mode
         square_size = 772 // 5  # Each square is 154 pixels wide for a 5x5 board
         x_offset = 64  # Offset from the left edge of the screen
+        
 
         # Fill background and draw the board grid
         self.SCREEN.fill(self.BG_COLOR)
@@ -71,8 +58,33 @@ class Battle:
                     pygame.quit()
                     sys.exit()
 
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_1:  # check if '1' key is pressed
+                        self.clear_mode = True
+                        print("Clear line mode activated! Click on a line to clear.")
+                    if event.key == pygame.K_2 and self.to_move == 'X':  # Double placement mode
+                        self.double_placement_mode = True
+                        self.first_placement = None
+                        print("Double placement mode activated! Place two X's adjacent to each other.")
+                    if event.key == pygame.K_3 and self.to_move == 'X':  # Activate remove box mode
+                        self.remove_box_mode = True
+                        self.box_corner_1 = None
+                        print("Remove 2x2 box mode activated! Select two diagonal corners of the box to remove.")
+                
                 if event.type == pygame.MOUSEBUTTONDOWN and con:
-                    self.board, self.to_move = self.add_XO_fivebyfive(self.board, self.graphical_board, self.to_move)
+                    x, y = pygame.mouse.get_pos()
+                    col = (x - x_offset) // square_size
+                    row = y // square_size
+
+                    if self.clear_mode:
+                        self.clear_line()
+                        self.clear_mode = False # exit clear mode after clearing line
+                    elif self.double_placement_mode and self.to_move == 'X':
+                        self.handle_double_placement(row, col)  # Handle both placements
+                    elif self.remove_box_mode and self.to_move == 'X':
+                        self.handle_remove_box(row, col)
+                    elif con:
+                        self.board, self.to_move = self.add_XO_fivebyfive(self.board, self.graphical_board, self.to_move)
                     
                     if game_finished:
                         self.board = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], 
@@ -81,6 +93,7 @@ class Battle:
                         self.graphical_board = [[[None, None] for _ in range(5)] for _ in range(5)]
 
                         self.to_move = 'X'
+                        game_finished = False
                         square_size = 772 // 5  # Each square is 154 pixels wide for a 5x5 board
                         x_offset = 64  # Offset from the left edge of the screen
                         self.ai_move_count = 0
@@ -92,6 +105,7 @@ class Battle:
                             pygame.draw.line(self.SCREEN, (0, 0, 50), (i * square_size + x_offset, 0), (i * square_size + x_offset, 772), 10)
 
                         pygame.display.update()
+                        
 
                     result = self.check_win_fivebyfive(self.board)
                     if result is not None:
@@ -119,8 +133,11 @@ class Battle:
                                 print(f"{result} wins!")
                                 con = False
                         pygame.display.update()  # Update the display after AI's move
+
+                    
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     escape = False
+        return result
 
     
     # function for 3x3 battles
@@ -206,8 +223,11 @@ class Battle:
                                 print(f"{result} wins!")
                                 con = False
                         pygame.display.update()
+                    
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     escape = False
+        print(result)
+        return result
 
 
     def render_board(self, board, ximg, oimg):
@@ -530,3 +550,143 @@ class Battle:
             return "DRAW"
 
         return None
+
+    def clear_line(self):
+        # Wait for the first click
+        first_click = None
+        while not first_click:
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
+                    first_click = pygame.mouse.get_pos()
+
+        # Wait for the second click
+        second_click = None
+        while not second_click:
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
+                    second_click = pygame.mouse.get_pos()
+
+        # Calculate start and end positions in terms of board cells
+        square_size = 772 // 5
+        x_offset = 64
+        start_x, start_y = first_click
+        end_x, end_y = second_click
+
+        # Determine the row and column indices of the start and end points
+        start_row = start_y // square_size
+        start_col = (start_x - x_offset) // square_size
+        end_row = end_y // square_size
+        end_col = (end_x - x_offset) // square_size
+
+        # Ensure the clicks are within the bounds of the board
+        if any(i < 0 or i > 4 for i in [start_row, start_col, end_row, end_col]):
+            print("Invalid selection. Please select corners within the board boundaries.")
+            return
+
+        # Determine the type of line: row, column, or diagonal
+        if start_row == end_row:  # Row
+            for col in range(min(start_col, end_col), max(start_col, end_col) + 1):
+                self.board[start_row][col] = None
+                self.graphical_board[start_row][col] = [None, None]
+        elif start_col == end_col:  # Column
+            for row in range(min(start_row, end_row), max(start_row, end_row) + 1):
+                self.board[row][start_col] = None
+                self.graphical_board[row][start_col] = [None, None]
+        elif abs(start_row - end_row) == abs(start_col - end_col):  # Diagonal
+            step_row = 1 if end_row > start_row else -1
+            step_col = 1 if end_col > start_col else -1
+            for i in range(abs(start_row - end_row) + 1):
+                row = start_row + i * step_row
+                col = start_col + i * step_col
+                self.board[row][col] = None
+                self.graphical_board[row][col] = [None, None]
+        else:
+            print("Invalid line selection. Please select a row, column, or diagonal.")
+            return
+
+        # Redraw the board to visually clear the line
+        self.SCREEN.fill(self.BG_COLOR)
+        for i in range(1, 5):
+            pygame.draw.line(self.SCREEN, (0, 0, 50), (x_offset, i * square_size), (772 + x_offset, i * square_size), 10)
+            pygame.draw.line(self.SCREEN, (0, 0, 50), (i * square_size + x_offset, 0), (i * square_size + x_offset, 772), 10)
+
+        # Redraw remaining X and O images
+        for row in range(5):
+            for col in range(5):
+                if self.board[row][col] == 'X':
+                    self.SCREEN.blit(self.X_IMG, (x_offset + col * square_size + 5, row * square_size + 5))
+                elif self.board[row][col] == 'O':
+                    self.SCREEN.blit(self.O_IMG, (x_offset + col * square_size + 5, row * square_size + 5))
+
+        pygame.display.update()
+        print("Line cleared!")
+
+    # Updated handle_double_placement method
+    def handle_double_placement(self, row, col):
+        if self.first_placement is None:
+            # Place the first X
+            if self.board[row][col] not in ['X', 'O']:
+                self.board[row][col] = 'X'
+                self.graphical_board[row][col] = ['X', (col, row)]
+                square_size = 772 // 5
+                x_offset = 64
+                x = col * square_size + x_offset + 5
+                y = row * square_size + 5
+                self.SCREEN.blit(self.X_IMG, (x, y))
+                pygame.display.update()
+                self.first_placement = (row, col)
+                print("First X placed. Select an adjacent position for the second X.")
+            else:
+                print("Invalid position! Please select an empty spot.")
+        else:
+            # Validate and place the second X
+            row_diff = abs(row - self.first_placement[0])
+            col_diff = abs(col - self.first_placement[1])
+            if (row_diff <= 1 and col_diff <= 1) and (row_diff + col_diff > 0):  # Ensure adjacent
+                if self.board[row][col] not in ['X', 'O']:
+                    self.board[row][col] = 'X'
+                    self.graphical_board[row][col] = ['X', (col, row)]
+                    square_size = 772 // 5
+                    x_offset = 64
+                    x = col * square_size + x_offset + 5
+                    y = row * square_size + 5
+                    self.SCREEN.blit(self.X_IMG, (x, y))
+                    pygame.display.update()
+                    self.first_placement = None
+                    self.double_placement_mode = False  # Exit double placement mode
+                    self.to_move = 'O'  # Switch turn
+                    print("Second X placed. Turn ends.")
+                else:
+                    print("Invalid position! Please select an empty spot.")
+            else:
+                print("Invalid position! Select an adjacent position.")
+
+    def handle_remove_box(self, row, col):
+        if self.box_corner_1 is None:
+            # Select the first corner of the box
+            self.box_corner_1 = (row, col)
+            print(f"First corner selected at ({row}, {col}). Select the opposite diagonal corner.")
+        else:
+            # Select the second corner and validate
+            row1, col1 = self.box_corner_1
+            if abs(row - row1) == 1 and abs(col - col1) == 1:  # Ensure valid 2x2 box
+                # Clear the 2x2 box
+                rows = [row1, row]
+                cols = [col1, col]
+                for r in rows:
+                    for c in cols:
+                        if self.board[r][c] in ['X', 'O']:
+                            self.board[r][c] = r * 5 + c + 1  # Reset the cell
+                            self.graphical_board[r][c] = [None, None]
+                            square_size = 772 // 5
+                            x_offset = 64
+                            x = c * square_size + x_offset
+                            y = r * square_size
+                            pygame.draw.rect(self.SCREEN, self.BG_COLOR, (x + 5, y + 5, square_size - 10, square_size - 10))
+                pygame.display.update()
+                print("2x2 box removed. Turn ends.")
+                self.to_move = 'O'  # Switch turn
+            else:
+                print("Invalid second corner! Select a valid diagonal corner.")
+            self.box_corner_1 = None
+            self.remove_box_mode = False

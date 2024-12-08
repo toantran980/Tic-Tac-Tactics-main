@@ -43,7 +43,7 @@ class Image:
         if direction in image_files:
             image = pygame.image.load(image_files[direction])
 
-            curr_attribute = f'idle_{direction.split('_')[1] }_image'
+            curr_attribute = f'idle_{direction.split("_")[1]}_image'
             
             # Use getattr to append the image to the corresponding idle image list
             current_idle_images = getattr(self, curr_attribute, [])
