@@ -4,6 +4,7 @@ from tic_tac_toe import Battle
 from tiles import Tile
 from pytmx.util_pygame import load_pygame
 from menu import GameMenu
+from npc import NPC
 
 class Game:
     def __init__(self) -> None:
@@ -32,6 +33,12 @@ class Game:
         self.O_IMG = pygame.image.load("Graphics/O.png")
         self.FONT = pygame.font.Font("Font/Pixeltype.ttf")
 
+        self.npcs = [
+            NPC(300, 400, 100, 100, self.screen),  # NPC 1 at (300, 400)
+            NPC(600, 200, 100, 100, self.screen),  # NPC 2 at (600, 200)
+            NPC(900, 800, 100, 100, self.screen)   # NPC 3 at (900, 800)
+        ]
+
     def update_camera(self):
         """Update the camera's position based on the character's position."""
         screen_center = pygame.Vector2(self.screen.get_width() // 2, self.screen.get_height() // 2)
@@ -48,7 +55,7 @@ class Game:
     def run(self) -> None:
         menu = GameMenu(self.screen)
         in_menu = True  # Track if we're in the menu
-
+        wait = True
         is_running = True
         while is_running:
             for event in pygame.event.get():
@@ -97,6 +104,47 @@ class Game:
                 else:
                     print(f"Error: curr_image index {self.handle.curr_image} is out of range. Total images: {len(self.handle.images)}")
 
+                for npc in self.npcs:
+                    npc.draw(self.camera_offset)  # Draw the NPC relative to the camera
+
+                    # Check collision and if the NPC is not permanently defeated
+                    if self.handle.rect.colliderect(npc.rect) and not npc.deafeated:  
+                        pygame.time.delay(1000)  # Pause for 1000 milliseconds (1.0 seconds)
+
+                        # Interaction loop to show dialogue
+                        wait = True
+                        while wait:
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    is_running = False
+                                    pygame.quit()
+                                    sys.exit()
+                                if event.type == pygame.MOUSEBUTTONDOWN:  # Exit dialogue on mouse click
+                                    wait = False
+
+                            # Draw the game screen
+                            self.screen.fill((0, 0, 0))  # Clear the screen
+                            self.update_camera()  # Update the camera position
+
+                            # Draw all game elements
+                            for sprite in self.sprite_group:
+                                offset_pos = sprite.rect.topleft - self.camera_offset
+                                self.screen.blit(sprite.image, offset_pos)
+
+                            # Draw player
+                            character_pos = self.handle.rect.topleft - self.camera_offset
+                            self.screen.blit(self.handle.images[self.handle.curr_image], character_pos)
+
+                            # Draw the NPC and dialogue box
+                            npc.draw(self.camera_offset)
+                            npc.draw_dialogue_box()  # Show dialogue box for the colliding NPC
+
+                            pygame.display.flip()  # Update the display
+                            self.clock.tick(60)  # Limit the frame rate to 60 FPS
+
+                        # After dialogue, start the battle
+                        self.battle = Battle(self.screen, self.BOARD, self.X_IMG, self.O_IMG, self.FONT, "threebythree")
+                        
                 pygame.display.flip()
                 self.clock.tick(60)
 

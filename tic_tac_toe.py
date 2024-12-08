@@ -133,8 +133,11 @@ class Battle:
                                 print(f"{result} wins!")
                                 con = False
                         pygame.display.update()  # Update the display after AI's move
+
+                    
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     escape = False
+        return result
 
     
     # function for 3x3 battles
@@ -220,8 +223,11 @@ class Battle:
                                 print(f"{result} wins!")
                                 con = False
                         pygame.display.update()
+                    
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     escape = False
+        print(result)
+        return result
 
 
     def render_board(self, board, ximg, oimg):
