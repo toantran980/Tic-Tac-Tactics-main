@@ -30,7 +30,7 @@ class Image:
             image = pygame.image.load(f'Character_Sprite/right_{i}.png')
             self.right_images.append(image)
         return self.right_images
-
+    
     def load_idle_image(self, direction: str) -> list:
         # Dictionary to map directions to their corresponding image file names
         image_files = {
@@ -54,3 +54,5 @@ class Image:
 
         else:
             raise ValueError("Invalid direction provided.")
+        
+    

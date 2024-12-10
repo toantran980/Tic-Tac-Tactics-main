@@ -11,14 +11,6 @@ class Handle:
         self.speed = 3
         self.walk_cooldown = 20
         self.is_moving = False
-<<<<<<< HEAD
-=======
-
-        self.gravity = 0.5
-        self.jump_strength = -15
-        self.on_ground = True
-        self.ground_level = 500
->>>>>>> 3b83eb328e66b97704fd18ccc592e52cf460b198
 
         self.load_images()
         self.images = self.idle_image
@@ -85,10 +77,4 @@ class Handle:
         if self.counter >= self.walk_cooldown:  # Adjust the threshold as needed
             if len(self.images) > 0:
                 self.curr_image = (self.curr_image + 1) % len(self.images)
-<<<<<<< HEAD
             self.counter = 0
-=======
-            self.counter = 0
-
-
->>>>>>> 3b83eb328e66b97704fd18ccc592e52cf460b198
